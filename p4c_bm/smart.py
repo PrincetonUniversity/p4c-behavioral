@@ -1111,6 +1111,60 @@ def render_dict_populate_registers(render_dict, hlir):
         register_info[name] = r_info
     render_dict["register_info"] = register_info
 
+# @Shahbaz:
+def render_dict_align_fields(render_dict):
+    render_dict['aligned_field_info'] = {}
+    aligned_field_info = render_dict['aligned_field_info']
+
+    field_info = render_dict['field_info']
+    header_info = render_dict['header_info']
+    ordered_header_instances_all = render_dict['ordered_header_instances_all']
+
+    for header_name in ordered_header_instances_all:
+        header = header_info[header_name]
+
+        field_names = []
+        run_bit_width = 0
+        for field_name in header['fields']:
+            bit_width = field_info[field_name]['bit_width']
+
+            run_bit_width += bit_width
+            if run_bit_width % 8 == 0:
+                if field_names:
+                    # NOTE: we are assuming that smaller fields (i.e., less than a byte)
+                    # combine together to align on a byte boundary.
+                    if run_bit_width <= 1024:
+                        field_names += [field_name]
+
+                        cumm_bit_width = sum([field_info[f]['bit_width'] for f in field_names])
+                        trunc_field_names = [f[len(header_name) + 1:] for f in field_names]
+                        aligned_field_name = header_name + '_' + reduce(lambda x, y: x + '_' + y, trunc_field_names)
+
+                        run_bit_width = 0
+                        field_names.reverse()
+                        for field_name in field_names:
+                            bit_width = field_info[field_name]['bit_width']
+                            mask = (2 ** bit_width - 1) << run_bit_width  # NOTE: this might break for fields > 64 bits, look in this ...
+                            aligned_field_info[field_name] = {"name": aligned_field_name,
+                                                              "bit_width": cumm_bit_width,
+                                                              "mask": mask,
+                                                              "bit_offset_hdr": run_bit_width}
+
+                            run_bit_width += bit_width
+                    else:
+                        assert(False)
+                else:
+                    aligned_field_name = header_name + '_' + field_name[len(header_name) + 1:]
+
+                    aligned_field_info[field_name] = {"name": aligned_field_name,
+                                                      "bit_width": bit_width,
+                                                      "mask": 0,
+                                                      "bit_offset_hdr": 0}
+                run_bit_width = 0
+                field_names = []
+            else:
+                field_names += [field_name]
+
 def get_type(byte_width):
     if byte_width == 1:
         return "uint8_t"
@@ -1168,6 +1222,9 @@ def render_dict_create(hlir,
     render_dict_populate_counters(render_dict, hlir)
     render_dict_populate_meters(render_dict, hlir)
     render_dict_populate_registers(render_dict, hlir)
+
+    # @Shahbaz:
+    render_dict_align_fields(render_dict)
 
     if hlir.p4_egress_ptr:
         render_dict["egress_entry_table"] = get_table_name(hlir.p4_egress_ptr)

@@ -69,3 +69,5 @@ build/*
 *.egg-info/*
 *TODO
 *.cache
+.idea/
+tests/output

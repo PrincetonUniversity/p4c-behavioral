@@ -59,6 +59,9 @@ def get_parser():
                         help="list of plugins to generate templates")
     parser.add_argument('--openflow-mapping-dir', help="Directory of openflow mapping files")
     parser.add_argument('--openflow-mapping-mod', help="Openflow mapping module name -- not a file name")
+    # @Shahbaz:
+    parser.add_argument('--ovs-parser-imp', dest='ovs_parser_imp', type=int, default=0,
+                        help='type of ovs parser implementation (0: per-field or 1: aligned-field)')
     return parser
 
 def _get_p4_basename(p4_source):
@@ -130,6 +133,10 @@ def main():
                                            args.meta_config,
                                            args.public_inc_path,
                                            dump_yaml = args.dump_yaml)
+
+    # @Shahbaz:
+    # TODO: add a command line argument for this option.
+    render_dict["OVS_PARSER_IMP"] = args.ovs_parser_imp
 
     if args.openflow_mapping_dir and args.openflow_mapping_mod:
         sys.path.append(args.openflow_mapping_dir)
