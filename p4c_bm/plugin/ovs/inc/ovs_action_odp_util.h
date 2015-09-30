@@ -24,11 +24,21 @@
 
 /* -- Called in lib/odp-util.c -- */
 #define OVS_ACTION_LEN \
-    case OVS_ACTION_ATTR_DEPARSE: return 0; \
+//::  for action_name in action_info:
+    case OVS_ACTION_ATTR__${action_name.upper()}: \
+        return 0; \
+//::  #endfor
+    case OVS_ACTION_ATTR_DEPARSE: \
+        return 0; \
     \
 
 /* -- Called in lib/odp-util.c -- */
 #define OVS_FORMAT_ACTION \
+//::  for action_name in action_info:
+    case OVS_ACTION_ATTR__${action_name.upper()}: \
+        ds_put_cstr(ds, "${action_name}"); \
+        break; \
+//::  #endfor
     case OVS_ACTION_ATTR_DEPARSE: \
         ds_put_cstr(ds, "deparse"); \
         break; \

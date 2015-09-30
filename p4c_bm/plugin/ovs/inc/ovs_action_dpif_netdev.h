@@ -24,6 +24,10 @@
 
 /* -- Called in lib/dpif-netdev.c -- */
 #define OVS_EXECUTE_CB \
+//::  for action_name in action_info:
+    case OVS_ACTION_ATTR__${action_name.upper()}: \
+        OVS_NOT_REACHED(); \
+//::  #endfor
     case OVS_ACTION_ATTR_DEPARSE: \
         OVS_NOT_REACHED(); \
     \

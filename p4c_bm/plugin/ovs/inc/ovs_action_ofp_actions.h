@@ -24,6 +24,9 @@
 
 /* -- Called in lib/ofp-actions.h -- */
 #define OVS_OFPACTS \
+//::  for action_name in action_info:
+    OFPACT(_${action_name.upper()}, ofpact_null, ofpact, "${action_name}") \
+//::  #endfor
     OFPACT(DEPARSE, ofpact_null, ofpact, "deparse") \
     \
 
@@ -33,6 +36,38 @@
 
 /* -- Called in lib/ofp-actions.c -- */
 #define OVS_FUNCTIONS \
+//::  for action_name in action_info:
+    static enum ofperr \
+    decode_OFPAT_RAW__${action_name.upper()}(struct ofpbuf *out) \
+    { \
+        ofpact_put__${action_name.upper()}(out); \
+        return 0; \
+    } \
+    \
+    static void \
+    encode__${action_name.upper()}(const struct ofpact_null *null OVS_UNUSED, \
+                   enum ofp_version ofp_version, struct ofpbuf *out) \
+    { \
+        if (ofp_version >= OFP15_VERSION) { \
+            put_OFPAT__${action_name.upper()}(out); \
+        } \
+    } \
+    \
+    static char * OVS_WARN_UNUSED_RESULT \
+    parse__${action_name.upper()}(char *arg OVS_UNUSED, struct ofpbuf *ofpacts, \
+                  enum ofputil_protocol *usable_protocols OVS_UNUSED) \
+    { \
+        ofpact_put__${action_name.upper()}(ofpacts); \
+        return NULL; \
+    } \
+    \
+    static void \
+    format__${action_name.upper()}(const struct ofpact_null *a OVS_UNUSED, struct ds *s) \
+    { \
+        ds_put_cstr(s, "${action_name}"); \
+    } \
+    \
+//::  #endfor
     static enum ofperr \
     decode_OFPAT_RAW_DEPARSE(struct ofpbuf *out) \
     { \
@@ -66,30 +101,50 @@
 
 /* -- Called in lib/ofp-actions.c -- */
 #define OVS_IS_SET_OR_MOVE_ACTION \
+//::  for action_name in action_info:
+    case OFPACT__${action_name.upper()}: \
+        return false; \
+//::  #endfor
     case OFPACT_DEPARSE: \
         return false; \
     \
 
 /* -- Called in lib/ofp-actions.c -- */
 #define OVS_IS_ALLOWED_IN_ACTIONS_SET \
+//::  for action_name in action_info:
+    case OFPACT__${action_name.upper()}: \
+        return false; \
+//::  #endfor
     case OFPACT_DEPARSE: \
         return false; \
     \
 
 /* -- Called in lib/ofp-actions.c -- */
 #define OVS_INSTRUCTION_TYPE_FROM_OFPACT_TYPE \
+//::  for action_name in action_info:
+    case OFPACT__${action_name.upper()}: \
+        return OVSINST_OFPIT11_APPLY_ACTIONS; \
+//::  #endfor
     case OFPACT_DEPARSE: \
         return OVSINST_OFPIT11_APPLY_ACTIONS; \
     \
 
 /* -- Called in lib/ofp-actions.c -- */
 #define OVS_CHECK__ \
+//::  for action_name in action_info:
+    case OFPACT__${action_name.upper()}: \
+        return 0; \
+//::  #endfor
     case OFPACT_DEPARSE: \
         return 0; \
     \
 
 /* -- Called in lib/ofp-actions.c -- */
 #define OVS_OUTPUTS_TO_PORT \
+//::  for action_name in action_info:
+    case OFPACT__${action_name.upper()}: \
+        return false; \
+//::  #endfor
     case OFPACT_DEPARSE: \
         return false; \
     \

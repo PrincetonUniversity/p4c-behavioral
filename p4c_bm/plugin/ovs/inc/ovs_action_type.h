@@ -23,6 +23,12 @@
 #define	OVS_ACTION_TYPE_H 1
 
 //::  base_ofpat_offset = 30
+//::  for action_name in action_info:
+    /* OF1.5+(${base_ofpat_offset}): void. */
+    OFPAT_RAW__${action_name.upper()},
+//::    base_ofpat_offset += 1
+
+//::  #endfor
     /* OF1.5+(${base_ofpat_offset}): void. */
     OFPAT_RAW_DEPARSE,
 

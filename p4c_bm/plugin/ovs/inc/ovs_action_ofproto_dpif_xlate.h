@@ -28,12 +28,28 @@
 
 /* -- Called in ofproto/ofproto-dpif-xlate.c -- */
 #define OVS_RECIRC_UNROLL_ACTIONS \
+//::  for action_name in action_info:
+    case OFPACT__${action_name.upper()}: \
+        break; \
+//::  #endfor
     case OFPACT_DEPARSE: \
         break; \
     \
 
 /* -- Called in ofproto/ofproto-dpif-xlate.c -- */
 #define OVS_COMPOSE_ACTIONS \
+//::  for action_name in action_info:
+    static void \
+    compose__${action_name}(struct xlate_ctx *ctx) \
+    { \
+        bool use_masked = ctx->xbridge->support.masked_set_action; \
+        ctx->xout->slow |= commit_odp_actions(&ctx->xin->flow, &ctx->base_flow, \
+                                          ctx->xout->odp_actions, \
+                                          &ctx->xout->wc, use_masked); \
+        nl_msg_put_flag(ctx->xout->odp_actions, OVS_ACTION_ATTR__${action_name.upper()}); \
+    } \
+    \
+//::  #endfor
     static void \
     compose_deparse(struct xlate_ctx *ctx) \
     { \
@@ -47,6 +63,11 @@
 
 /* -- Called in ofproto/ofproto-dpif-xlate.c -- */
 #define OVS_DO_XLATE_ACTIONS \
+//::  for action_name in action_info:
+    case OFPACT__${action_name.upper()}: \
+        compose__${action_name}(ctx); \
+        break; \
+//::  #endfor
     case OFPACT_DEPARSE: \
         compose_deparse(ctx); \
         break; \

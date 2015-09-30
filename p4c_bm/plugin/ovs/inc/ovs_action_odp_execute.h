@@ -24,6 +24,13 @@
 
 /* -- Called in lib/odp-execute.c -- */
 #define OVS_ODP_EXECUTE_ACTIONS \
+//::  for action_name in action_info:
+    case OVS_ACTION_ATTR__${action_name.upper()}: \
+        for (i = 0; i < cnt; i++) { \
+            _${action_name}(packets[i]); \
+        } \
+        break; \
+//::  #endfor
     case OVS_ACTION_ATTR_DEPARSE: \
         for (i = 0; i < cnt; i++) { \
             deparse(packets[i]); \
@@ -33,6 +40,10 @@
 
 /* -- Called in lib/odp-execute.c -- */
 #define OVS_REQUIRES_DATAPATH_ASSISTANCE \
+//::  for action_name in action_info:
+    case OVS_ACTION_ATTR__${action_name.upper()}: \
+        return false; \
+//::  #endfor
     case OVS_ACTION_ATTR_DEPARSE: \
         return false; \
     \

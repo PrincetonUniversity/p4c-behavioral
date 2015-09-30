@@ -24,6 +24,9 @@
 
 /* -- Called in lib/packets.c -- */
 #define OVS_FUNCTION_DECLS \
+//::  for action_name in action_info:
+    void _${action_name}(struct dp_packet *packet); \
+//::  #endfor
     void deparse(struct dp_packet *packet); \
     \
 

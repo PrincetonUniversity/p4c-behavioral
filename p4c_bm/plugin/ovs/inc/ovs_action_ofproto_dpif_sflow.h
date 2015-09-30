@@ -24,6 +24,10 @@
 
 /* -- Called in ofproto/ofproto-dpif-sflow.h -- */
 #define OVS_SFLOW_READ_ACTIONS \
+//::  for action_name in action_info:
+    case OVS_ACTION_ATTR__${action_name.upper()}: \
+        break; \
+//::  #endfor
     case OVS_ACTION_ATTR_DEPARSE: \
         break; \
     \
