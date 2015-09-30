@@ -22,36 +22,6 @@
 #ifndef OVS_MATCH_FLOW_H
 #define	OVS_MATCH_FLOW_H 1
 
-//::  import math
-//::
-//::  ordered_field_instances_all__name_width_mask_offset = []
-//::  ordered_header_instances_all_field__name_width_mask_offset = {}
-//::  for header_name in ordered_header_instances_all:
-//::    ordered_header_instances_all_field__name_width_mask_offset[header_name] = []
-//::    proc_fields = []
-//::    for field_name in header_info[header_name]["fields"]:
-//::      if OVS_PARSER_IMP == 0:
-//::        bit_width = field_info[field_name]["bit_width"]
-//::        bit_width = int(math.ceil(bit_width/8.0)*8)
-//::        mask = field_info[field_name]["mask"]
-//::        bit_offset_hdr = field_info[field_name]["bit_offset_hdr"]
-//::      elif OVS_PARSER_IMP == 1:
-//::        bit_width = aligned_field_info[field_name]["bit_width"]
-//::        mask = aligned_field_info[field_name]["mask"]
-//::        bit_offset_hdr = aligned_field_info[field_name]["bit_offset_hdr"]
-//::        field_name = aligned_field_info[field_name]["name"]
-//::        if field_name in proc_fields:
-//::          continue
-//::        #endif
-//::        proc_fields += [field_name]
-//::      else:
-//::        assert(False)
-//::      #endif
-//::      ordered_field_instances_all__name_width_mask_offset += [(field_name, bit_width, mask, bit_offset_hdr)]
-//::      ordered_header_instances_all_field__name_width_mask_offset[header_name] += [(field_name, bit_width, mask, bit_offset_hdr)]
-//::    #endfor
-//::  #endfor
-//::
 //::  def byte_array_to_int(bytes):
 //::    res = 0
 //::    len_ = len(bytes)
@@ -115,8 +85,11 @@
     if ( \
 //::            for key_type, key_value in branch_on:
 //::              if key_type == "field_ref":
-//::                header_name = field_info[key_value]['parent_header']
-//::                field_name, bit_width, mask, bit_offset_hdr = ordered_header_instances_all_field__name_width[header_name]
+//::                header_name = field_info[key_value]["parent_header"]
+//::                field_name = aligned_field_info[key_value]["name"]
+//::                bit_width = aligned_field_info[key_value]["bit_width"]
+//::                mask = aligned_field_info[key_value]["mask"]
+//::                bit_offset_hdr = aligned_field_info[key_value]["bit_offset_hdr"]
 //::                if bit_width == 8:
 //::                  if mask:
         ((packet->${header_name}.${field_name} & ${hex(mask)}) >> ${bit_offset_hdr}) == ${hex(byte_array_to_int(value))} \
