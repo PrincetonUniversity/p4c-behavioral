@@ -24,10 +24,15 @@
 
 /* -- Called in lib/odp-execute.c -- */
 #define OVS_ODP_EXECUTE_ACTIONS \
-//::  for action_name in action_info:
-    case OVS_ACTION_ATTR__${action_name.upper()}: \
+//::  for header_name in ordered_header_instances_regular:
+    case OVS_ACTION_ATTR_ADD_HEADER_${header_name.upper()}: \
         for (i = 0; i < cnt; i++) { \
-            _${action_name}(packets[i]); \
+            add_header_${header_name}(packets[i]); \
+        } \
+        break; \
+    case OVS_ACTION_ATTR_RMV_HEADER_${header_name.upper()}: \
+        for (i = 0; i < cnt; i++) { \
+            rmv_header_${header_name}(packets[i]); \
         } \
         break; \
 //::  #endfor
@@ -40,9 +45,9 @@
 
 /* -- Called in lib/odp-execute.c -- */
 #define OVS_REQUIRES_DATAPATH_ASSISTANCE \
-//::  for action_name in action_info:
-    case OVS_ACTION_ATTR__${action_name.upper()}: \
-        return false; \
+//::  for header_name in ordered_header_instances_regular:
+    case OVS_ACTION_ATTR_ADD_HEADER_${header_name.upper()}: \
+    case OVS_ACTION_ATTR_RMV_HEADER_${header_name.upper()}: \
 //::  #endfor
     case OVS_ACTION_ATTR_DEPARSE: \
         return false; \

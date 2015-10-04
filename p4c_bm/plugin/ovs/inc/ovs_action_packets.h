@@ -24,14 +24,28 @@
 
 /* -- Called in lib/packets.c -- */
 #define OVS_FUNCTION_DECLS \
-//::  for action_name in action_info:
-    void _${action_name}(struct dp_packet *packet); \
+//::  for header_name in ordered_header_instances_regular:
+    void add_header_${header_name}(struct dp_packet *packet); \
+    void rmv_header_${header_name}(struct dp_packet *packet); \
 //::  #endfor
     void deparse(struct dp_packet *packet); \
     \
 
 /* -- Called in lib/packets.c -- */
 #define OVS_FUNCTION_DEFS \
+//::  for header_name in ordered_header_instances_regular:
+    void add_header_${header_name}(struct dp_packet *packet) \
+    { \
+        packet->${header_name}_valid = true; \
+    } \
+    \
+    void rmv_header_${header_name}(struct dp_packet *packet) \
+    { \
+        packet->${header_name}_valid = false; \
+        packet->${header_name}_ofs = UINT16_MAX; \
+    } \
+    \
+//::  #endfor
     void deparse(struct dp_packet *packet) \
     { \
         char *data = dp_packet_data(packet); \

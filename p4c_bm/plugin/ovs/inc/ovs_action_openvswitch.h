@@ -24,8 +24,9 @@
 
 /* -- Called in datapath/linux/compat/include/linux/openvswitch.h -- */
 #define OVS_ACTION_ATTR \
-//::  for action_name in action_info:
-    OVS_ACTION_ATTR__${action_name.upper()}, \
+//::  for header_name in ordered_header_instances_regular:
+    OVS_ACTION_ATTR_ADD_HEADER_${header_name.upper()}, \
+    OVS_ACTION_ATTR_RMV_HEADER_${header_name.upper()}, \
 //::  #endfor
     OVS_ACTION_ATTR_DEPARSE, \
     \

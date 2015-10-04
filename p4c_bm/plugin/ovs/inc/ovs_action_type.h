@@ -23,10 +23,14 @@
 #define	OVS_ACTION_TYPE_H 1
 
 //::  base_ofpat_offset = 30
-//::  for action_name in action_info:
+//::  for header_name in ordered_header_instances_regular:
     /* OF1.5+(${base_ofpat_offset}): void. */
-    OFPAT_RAW__${action_name.upper()},
-//::    base_ofpat_offset += 1
+    OFPAT_RAW_ADD_HEADER_${header_name.upper()},
+//::  base_ofpat_offset += 1
+
+    /* OF1.5+(${base_ofpat_offset}): void. */
+    OFPAT_RAW_RMV_HEADER_${header_name.upper()},
+//::  base_ofpat_offset += 1
 
 //::  #endfor
     /* OF1.5+(${base_ofpat_offset}): void. */

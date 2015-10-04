@@ -24,9 +24,9 @@
 
 /* -- Called in lib/odp-util.c -- */
 #define OVS_ACTION_LEN \
-//::  for action_name in action_info:
-    case OVS_ACTION_ATTR__${action_name.upper()}: \
-        return 0; \
+//::  for header_name in ordered_header_instances_regular:
+    case OVS_ACTION_ATTR_ADD_HEADER_${header_name.upper()}: \
+    case OVS_ACTION_ATTR_RMV_HEADER_${header_name.upper()}: \
 //::  #endfor
     case OVS_ACTION_ATTR_DEPARSE: \
         return 0; \
@@ -34,9 +34,12 @@
 
 /* -- Called in lib/odp-util.c -- */
 #define OVS_FORMAT_ACTION \
-//::  for action_name in action_info:
-    case OVS_ACTION_ATTR__${action_name.upper()}: \
-        ds_put_cstr(ds, "${action_name}"); \
+//::  for header_name in ordered_header_instances_regular:
+    case OVS_ACTION_ATTR_ADD_HEADER_${header_name.upper()}: \
+        ds_put_cstr(ds, "add_header_${header_name}"); \
+        break; \
+    case OVS_ACTION_ATTR_RMV_HEADER_${header_name.upper()}: \
+        ds_put_cstr(ds, "rmv_header_${header_name}"); \
         break; \
 //::  #endfor
     case OVS_ACTION_ATTR_DEPARSE: \

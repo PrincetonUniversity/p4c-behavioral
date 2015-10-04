@@ -28,9 +28,9 @@
 
 /* -- Called in ofproto/ofproto-dpif-xlate.c -- */
 #define OVS_RECIRC_UNROLL_ACTIONS \
-//::  for action_name in action_info:
-    case OFPACT__${action_name.upper()}: \
-        break; \
+//::  for header_name in ordered_header_instances_regular:
+    case OFPACT_ADD_HEADER_${header_name.upper()}: \
+    case OFPACT_RMV_HEADER_${header_name.upper()}: \
 //::  #endfor
     case OFPACT_DEPARSE: \
         break; \
@@ -38,15 +38,25 @@
 
 /* -- Called in ofproto/ofproto-dpif-xlate.c -- */
 #define OVS_COMPOSE_ACTIONS \
-//::  for action_name in action_info:
+//::  for header_name in ordered_header_instances_regular:
     static void \
-    compose__${action_name}(struct xlate_ctx *ctx) \
+    compose_add_header_${header_name}(struct xlate_ctx *ctx) \
     { \
         bool use_masked = ctx->xbridge->support.masked_set_action; \
         ctx->xout->slow |= commit_odp_actions(&ctx->xin->flow, &ctx->base_flow, \
                                           ctx->xout->odp_actions, \
                                           &ctx->xout->wc, use_masked); \
-        nl_msg_put_flag(ctx->xout->odp_actions, OVS_ACTION_ATTR__${action_name.upper()}); \
+        nl_msg_put_flag(ctx->xout->odp_actions, OVS_ACTION_ATTR_ADD_HEADER_${header_name.upper()}); \
+    } \
+    \
+    static void \
+    compose_rmv_header_${header_name}(struct xlate_ctx *ctx) \
+    { \
+        bool use_masked = ctx->xbridge->support.masked_set_action; \
+        ctx->xout->slow |= commit_odp_actions(&ctx->xin->flow, &ctx->base_flow, \
+                                          ctx->xout->odp_actions, \
+                                          &ctx->xout->wc, use_masked); \
+        nl_msg_put_flag(ctx->xout->odp_actions, OVS_ACTION_ATTR_RMV_HEADER_${header_name.upper()}); \
     } \
     \
 //::  #endfor
@@ -63,9 +73,12 @@
 
 /* -- Called in ofproto/ofproto-dpif-xlate.c -- */
 #define OVS_DO_XLATE_ACTIONS \
-//::  for action_name in action_info:
-    case OFPACT__${action_name.upper()}: \
-        compose__${action_name}(ctx); \
+//::  for header_name in ordered_header_instances_regular:
+    case OFPACT_ADD_HEADER_${header_name.upper()}: \
+        compose_add_header_${header_name}(ctx); \
+        break; \
+    case OFPACT_RMV_HEADER_${header_name.upper()}: \
+        compose_rmv_header_${header_name}(ctx); \
         break; \
 //::  #endfor
     case OFPACT_DEPARSE: \
