@@ -23,7 +23,7 @@
 #define	OVS_MATCH_DP_PACKET_H 1
 
 /* -- Called in lib/dp-packet.h -- */
-#define OVS_MATCH_HEADER_OFFSETS \
+#define OVS_HEADER_OFFSETS \
 //::  for header_name in ordered_header_instances_regular:
     uint16_t ${header_name}_ofs; \
     struct ${header_name}_header ${header_name}; \
@@ -34,7 +34,7 @@
     \
 
 /* -- Called in lib/dp-packet.h -- */
-#define OVS_MATCH_HEADER_RESET_OFFSETS \
+#define OVS_HEADER_RESET_OFFSETS \
 //::  for header_name in ordered_header_instances_regular:
     b->${header_name}_ofs = UINT16_MAX; \
     memset(&b->${header_name}, 0x00, sizeof(struct ${header_name}_header)); \

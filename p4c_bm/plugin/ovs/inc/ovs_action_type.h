@@ -33,6 +33,10 @@
 //::  base_ofpat_offset += 1
 
 //::  #endfor
+    /* OF1.5+(${base_ofpat_offset}): struct ofp_action_add_to_field, ... */
+    OFPAT_RAW_ADD_TO_FIELD,
+//::  base_ofpat_offset += 1
+
     /* OF1.5+(${base_ofpat_offset}): void. */
     OFPAT_RAW_DEPARSE,
 
