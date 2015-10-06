@@ -61,15 +61,15 @@
     struct ovs_key_${header_name} { \
 //::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
 //::      if bit_width == 8:
-        __u8 ${field_name}; \
+        uint8_t ${field_name}; \
 //::      elif bit_width == 16:
-        __be16 ${field_name}; \
+        ovs_be16 ${field_name}; \
 //::      elif bit_width == 32:
-        __be32 ${field_name}; \
+        ovs_be32 ${field_name}; \
 //::      elif bit_width == 64:
-        __be64 ${field_name}; \
+        ovs_be64 ${field_name}; \
 //::      else:
-        __u8 ${field_name}[${bit_width}/8]; \
+        uint8_t ${field_name}[${bit_width}/8]; \
 //::      #endif
 //::    #endfor
     }; \

@@ -28,7 +28,6 @@
     case OVS_ACTION_ATTR_ADD_HEADER_${header_name.upper()}: \
     case OVS_ACTION_ATTR_RMV_HEADER_${header_name.upper()}: \
 //::  #endfor
-    case OVS_ACTION_ATTR_DEPARSE: \
         return 0; \
     \
 
@@ -42,9 +41,6 @@
         ds_put_cstr(ds, "rmv_header_${header_name}"); \
         break; \
 //::  #endfor
-    case OVS_ACTION_ATTR_DEPARSE: \
-        ds_put_cstr(ds, "deparse"); \
-        break; \
     \
 
 #endif	/* OVS_ACTION_ODP_UTIL_H */

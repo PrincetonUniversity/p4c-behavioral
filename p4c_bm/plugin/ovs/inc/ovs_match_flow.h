@@ -168,7 +168,7 @@
 /* -- Called in lib/flow.c -- */
 #define OVS_FLOW_WC_MAP \
 //::  for header_name in ordered_header_instances_regular:
-    | MINIFLOW_PKT_MAP(${header_name}) \
+    FLOWMAP_SET(map, ${header_name}); \
 //::  #endfor
     \
 

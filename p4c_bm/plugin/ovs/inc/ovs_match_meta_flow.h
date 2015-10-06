@@ -190,38 +190,4 @@
 //::  #endfor
     \
 
-/* -- Called in lib/meta-flow.c -- */
-#define OVS_FLOW_DECLS \
-    void mf_add_to_flow_value(const struct mf_field *, const union mf_value *, struct flow *); \
-    \
-
-/* -- Called in lib/meta-flow.c -- */
-#define OVS_FLOW_FUNCTIONS \
-    void mf_add_to_flow_value(const struct mf_field *mf, const union mf_value *value, struct flow *flow) \
-    { \
-        switch (mf->id) { \
-//::  for header_name in ordered_header_instances_all:
-//::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
-            case MFF_${field_name.upper()}: \
-//::      if bit_width == 8:
-                flow->${header_name}.hdr.${field_name} += value->u8; \
-//::      elif bit_width == 16:
-                flow->${header_name}.hdr.${field_name} += value->be16; \
-//::      elif bit_width == 32:
-                flow->${header_name}.hdr.${field_name} += value->be32; \
-//::      elif bit_width == 64:
-                flow->${header_name}.hdr.${field_name} += value->be64; \
-//::      else:
-//::        pass  # TODO: implement this.
-//::      #endif
-                break; \
-//::    #endfor
-//::  #endfor
-            case MFF_N_IDS: \
-            default: \
-                OVS_NOT_REACHED(); \
-        } \
-    } \
-    \
-
 #endif	/* OVS_MATCH_META_FLOW_H */

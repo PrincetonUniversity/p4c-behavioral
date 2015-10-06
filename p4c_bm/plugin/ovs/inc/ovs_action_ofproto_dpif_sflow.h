@@ -28,7 +28,6 @@
     case OVS_ACTION_ATTR_ADD_HEADER_${header_name.upper()}: \
     case OVS_ACTION_ATTR_RMV_HEADER_${header_name.upper()}: \
 //::  #endfor
-    case OVS_ACTION_ATTR_DEPARSE: \
         break; \
     \
 

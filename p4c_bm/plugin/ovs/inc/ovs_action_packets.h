@@ -28,7 +28,6 @@
     void add_header_${header_name}(struct dp_packet *packet); \
     void rmv_header_${header_name}(struct dp_packet *packet); \
 //::  #endfor
-    void deparse(struct dp_packet *packet); \
     \
 
 /* -- Called in lib/packets.c -- */

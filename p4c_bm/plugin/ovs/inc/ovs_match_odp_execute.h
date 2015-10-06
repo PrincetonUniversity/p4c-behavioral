@@ -70,7 +70,7 @@
             ovs_be64 ${field_name} = key->${field_name} | (${header_name}->${field_name} & ~mask->${field_name}); \
 //::      else:
             uint8_t ${field_name}[${bit_width}/8]; \
-            p4_ovs__apply_mask(key->${field_name}, ${header_name}->${field_name}, mask->${field_name}, \
+            ovs_apply_mask(key->${field_name}, ${header_name}->${field_name}, mask->${field_name}, \
                 ${field_name}, ${bit_width}/8); \
 //::      #endif
 //::    #endfor

@@ -22,7 +22,7 @@
 #ifndef OVS_ACTION_TYPE_H
 #define	OVS_ACTION_TYPE_H 1
 
-//::  base_ofpat_offset = 30
+//::  base_ofpat_offset = 31
 //::  for header_name in ordered_header_instances_regular:
     /* OF1.5+(${base_ofpat_offset}): void. */
     OFPAT_RAW_ADD_HEADER_${header_name.upper()},
@@ -33,12 +33,6 @@
 //::  base_ofpat_offset += 1
 
 //::  #endfor
-    /* OF1.5+(${base_ofpat_offset}): struct ofp_action_add_to_field, ... */
-    OFPAT_RAW_ADD_TO_FIELD,
-//::  base_ofpat_offset += 1
-
-    /* OF1.5+(${base_ofpat_offset}): void. */
-    OFPAT_RAW_DEPARSE,
 
 /* Do NOT REMOVE THIS. */
 //}

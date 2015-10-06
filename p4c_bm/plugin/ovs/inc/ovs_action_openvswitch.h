@@ -28,7 +28,6 @@
     OVS_ACTION_ATTR_ADD_HEADER_${header_name.upper()}, \
     OVS_ACTION_ATTR_RMV_HEADER_${header_name.upper()}, \
 //::  #endfor
-    OVS_ACTION_ATTR_DEPARSE, \
     \
 
 #endif	/* OVS_ACTION_OPENVSWITCH_H */

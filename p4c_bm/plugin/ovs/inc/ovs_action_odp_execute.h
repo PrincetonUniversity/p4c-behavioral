@@ -36,11 +36,6 @@
         } \
         break; \
 //::  #endfor
-    case OVS_ACTION_ATTR_DEPARSE: \
-        for (i = 0; i < cnt; i++) { \
-            deparse(packets[i]); \
-        } \
-        break; \
     \
 
 /* -- Called in lib/odp-execute.c -- */
@@ -49,8 +44,6 @@
     case OVS_ACTION_ATTR_ADD_HEADER_${header_name.upper()}: \
     case OVS_ACTION_ATTR_RMV_HEADER_${header_name.upper()}: \
 //::  #endfor
-    case OVS_ACTION_ATTR_DEPARSE: \
-        return false; \
     \
 
 #endif	/* OVS_ACTION_ODP_EXECUTE_H */
