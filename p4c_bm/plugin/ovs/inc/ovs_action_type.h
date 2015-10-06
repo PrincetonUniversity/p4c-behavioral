@@ -22,6 +22,32 @@
 #ifndef OVS_ACTION_TYPE_H
 #define	OVS_ACTION_TYPE_H 1
 
+//::  import math
+//::
+//::  ordered_field_instances_all__name_width = []
+//::  ordered_header_instances_all_field__name_width = {}
+//::  for header_name in ordered_header_instances_all:
+//::    ordered_header_instances_all_field__name_width[header_name] = []
+//::    proc_fields = []
+//::    for field_name in header_info[header_name]["fields"]:
+//::      if OVS_PARSER_IMP == 0:
+//::        bit_width = field_info[field_name]["bit_width"]
+//::        bit_width = int(math.ceil(bit_width/8.0)*8)
+//::      elif OVS_PARSER_IMP == 1:
+//::        bit_width = aligned_field_info[field_name]["bit_width"]
+//::        field_name = aligned_field_info[field_name]["name"]
+//::        if field_name in proc_fields:
+//::          continue
+//::        #endif
+//::        proc_fields += [field_name]
+//::      else:
+//::        assert(False)
+//::      #endif
+//::      ordered_field_instances_all__name_width += [(field_name, bit_width)]
+//::      ordered_header_instances_all_field__name_width[header_name] += [(field_name, bit_width)]
+//::    #endfor
+//::  #endfor
+//::
 //::  base_ofpat_offset = 31
 //::  for header_name in ordered_header_instances_regular:
     /* OF1.5+(${base_ofpat_offset}): void. */
@@ -29,9 +55,28 @@
 //::  base_ofpat_offset += 1
 
     /* OF1.5+(${base_ofpat_offset}): void. */
-    OFPAT_RAW_RMV_HEADER_${header_name.upper()},
+    OFPAT_RAW_REMOVE_HEADER_${header_name.upper()},
 //::  base_ofpat_offset += 1
 
+//::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
+//::      if bit_width == 8:
+    /* OF1.5+(${base_ofpat_offset}): uint8_t. */
+    OFPAT_RAW_MODIFY_FIELD_${field_name.upper()},
+//::      elif bit_width == 16:
+    /* OF1.5+(${base_ofpat_offset}): ovs_be16. */
+    OFPAT_RAW_MODIFY_FIELD_${field_name.upper()},
+//::      elif bit_width == 32:
+    /* OF1.5+(${base_ofpat_offset}): ovs_be32. */
+    OFPAT_RAW_MODIFY_FIELD_${field_name.upper()},
+//::      elif bit_width == 64:
+    /* OF1.5+(${base_ofpat_offset}): ovs_be64. */
+    OFPAT_RAW_MODIFY_FIELD_${field_name.upper()},
+//::      else:
+//::        pass  # TODO: implement this.
+//::      #endif
+//::      base_ofpat_offset += 1
+
+//::    #endfor
 //::  #endfor
 
 /* Do NOT REMOVE THIS. */

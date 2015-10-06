@@ -22,11 +22,40 @@
 #ifndef OVS_ACTION_ODP_UTIL_H
 #define	OVS_ACTION_ODP_UTIL_H 1
 
+//::  import math
+//::
+//::  ordered_field_instances_all__name_width = []
+//::  ordered_header_instances_all_field__name_width = {}
+//::  for header_name in ordered_header_instances_all:
+//::    ordered_header_instances_all_field__name_width[header_name] = []
+//::    proc_fields = []
+//::    for field_name in header_info[header_name]["fields"]:
+//::      if OVS_PARSER_IMP == 0:
+//::        bit_width = field_info[field_name]["bit_width"]
+//::        bit_width = int(math.ceil(bit_width/8.0)*8)
+//::      elif OVS_PARSER_IMP == 1:
+//::        bit_width = aligned_field_info[field_name]["bit_width"]
+//::        field_name = aligned_field_info[field_name]["name"]
+//::        if field_name in proc_fields:
+//::          continue
+//::        #endif
+//::        proc_fields += [field_name]
+//::      else:
+//::        assert(False)
+//::      #endif
+//::      ordered_field_instances_all__name_width += [(field_name, bit_width)]
+//::      ordered_header_instances_all_field__name_width[header_name] += [(field_name, bit_width)]
+//::    #endfor
+//::  #endfor
+//::
 /* -- Called in lib/odp-util.c -- */
 #define OVS_ACTION_LEN \
 //::  for header_name in ordered_header_instances_regular:
     case OVS_ACTION_ATTR_ADD_HEADER_${header_name.upper()}: \
-    case OVS_ACTION_ATTR_RMV_HEADER_${header_name.upper()}: \
+    case OVS_ACTION_ATTR_REMOVE_HEADER_${header_name.upper()}: \
+//::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
+//::      pass
+//::    #endfor
 //::  #endfor
         return 0; \
     \
@@ -37,9 +66,12 @@
     case OVS_ACTION_ATTR_ADD_HEADER_${header_name.upper()}: \
         ds_put_cstr(ds, "add_header_${header_name}"); \
         break; \
-    case OVS_ACTION_ATTR_RMV_HEADER_${header_name.upper()}: \
-        ds_put_cstr(ds, "rmv_header_${header_name}"); \
+    case OVS_ACTION_ATTR_REMOVE_HEADER_${header_name.upper()}: \
+        ds_put_cstr(ds, "remove_header_${header_name}"); \
         break; \
+//::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
+//::      pass
+//::    #endfor
 //::  #endfor
     \
 

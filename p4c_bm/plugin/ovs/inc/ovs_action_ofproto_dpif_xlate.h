@@ -22,6 +22,32 @@
 #ifndef OVS_ACTION_OFPROTO_DPIF_XLATE_H
 #define	OVS_ACTION_OFPROTO_DPIF_XLATE_H 1
 
+//::  import math
+//::
+//::  ordered_field_instances_all__name_width = []
+//::  ordered_header_instances_all_field__name_width = {}
+//::  for header_name in ordered_header_instances_all:
+//::    ordered_header_instances_all_field__name_width[header_name] = []
+//::    proc_fields = []
+//::    for field_name in header_info[header_name]["fields"]:
+//::      if OVS_PARSER_IMP == 0:
+//::        bit_width = field_info[field_name]["bit_width"]
+//::        bit_width = int(math.ceil(bit_width/8.0)*8)
+//::      elif OVS_PARSER_IMP == 1:
+//::        bit_width = aligned_field_info[field_name]["bit_width"]
+//::        field_name = aligned_field_info[field_name]["name"]
+//::        if field_name in proc_fields:
+//::          continue
+//::        #endif
+//::        proc_fields += [field_name]
+//::      else:
+//::        assert(False)
+//::      #endif
+//::      ordered_field_instances_all__name_width += [(field_name, bit_width)]
+//::      ordered_header_instances_all_field__name_width[header_name] += [(field_name, bit_width)]
+//::    #endfor
+//::  #endfor
+//::
 /* -- Called in ofproto/ofproto-dpif-xlate.c -- */
 #define OVS_ACTION_HELPERS \
     \
@@ -30,7 +56,10 @@
 #define OVS_RECIRC_UNROLL_ACTIONS \
 //::  for header_name in ordered_header_instances_regular:
     case OFPACT_ADD_HEADER_${header_name.upper()}: \
-    case OFPACT_RMV_HEADER_${header_name.upper()}: \
+    case OFPACT_REMOVE_HEADER_${header_name.upper()}: \
+//::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
+    case OFPACT_MODIFY_FIELD_${field_name.upper()}: \
+//::    #endfor
 //::  #endfor
         break; \
     \
@@ -49,15 +78,18 @@
     } \
     \
     static void \
-    compose_rmv_header_${header_name}(struct xlate_ctx *ctx) \
+    compose_remove_header_${header_name}(struct xlate_ctx *ctx) \
     { \
         bool use_masked = ctx->xbridge->support.masked_set_action; \
         ctx->xout->slow |= commit_odp_actions(&ctx->xin->flow, &ctx->base_flow, \
                                           ctx->odp_actions, ctx->wc, \
                                           use_masked); \
-        nl_msg_put_flag(ctx->odp_actions, OVS_ACTION_ATTR_RMV_HEADER_${header_name.upper()}); \
+        nl_msg_put_flag(ctx->odp_actions, OVS_ACTION_ATTR_REMOVE_HEADER_${header_name.upper()}); \
     } \
     \
+//::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
+//::      pass
+//::    #endfor
 //::  #endfor
     \
 
@@ -71,9 +103,14 @@
     case OFPACT_ADD_HEADER_${header_name.upper()}: \
         compose_add_header_${header_name}(ctx); \
         break; \
-    case OFPACT_RMV_HEADER_${header_name.upper()}: \
-        compose_rmv_header_${header_name}(ctx); \
+    case OFPACT_REMOVE_HEADER_${header_name.upper()}: \
+        compose_remove_header_${header_name}(ctx); \
         break; \
+//::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
+    case OFPACT_MODIFY_FIELD_${field_name.upper()}: \
+        --
+        break; \
+//::    #endfor
 //::  #endfor
     \
 
