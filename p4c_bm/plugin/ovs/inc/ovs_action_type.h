@@ -48,7 +48,7 @@
 //::    #endfor
 //::  #endfor
 //::
-//::  base_ofpat_offset = 31
+//::  base_ofpat_offset = 33
 //::  for header_name in ordered_header_instances_regular:
     /* OF1.5+(${base_ofpat_offset}): void. */
     OFPAT_RAW_ADD_HEADER_${header_name.upper()},
@@ -59,26 +59,9 @@
 //::  base_ofpat_offset += 1
 
 //::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
-//::      if bit_width == 8:
-    /* OF1.5+(${base_ofpat_offset}): uint8_t. */
-    OFPAT_RAW_MODIFY_FIELD_${field_name.upper()},
-//::      elif bit_width == 16:
-    /* OF1.5+(${base_ofpat_offset}): ovs_be16. */
-    OFPAT_RAW_MODIFY_FIELD_${field_name.upper()},
-//::      elif bit_width == 32:
-    /* OF1.5+(${base_ofpat_offset}): ovs_be32. */
-    OFPAT_RAW_MODIFY_FIELD_${field_name.upper()},
-//::      elif bit_width == 64:
-    /* OF1.5+(${base_ofpat_offset}): ovs_be64. */
-    OFPAT_RAW_MODIFY_FIELD_${field_name.upper()},
-//::      else:
-//::        pass  # TODO: implement this.
-//::      #endif
-//::      base_ofpat_offset += 1
-
+//::      pass
 //::    #endfor
 //::  #endfor
-
 /* Do NOT REMOVE THIS. */
 //}
 

@@ -58,7 +58,7 @@
     case OFPACT_ADD_HEADER_${header_name.upper()}: \
     case OFPACT_REMOVE_HEADER_${header_name.upper()}: \
 //::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
-    case OFPACT_MODIFY_FIELD_${field_name.upper()}: \
+//::      pass
 //::    #endfor
 //::  #endfor
         break; \
@@ -107,9 +107,7 @@
         compose_remove_header_${header_name}(ctx); \
         break; \
 //::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
-    case OFPACT_MODIFY_FIELD_${field_name.upper()}: \
-        --
-        break; \
+//::      pass
 //::    #endfor
 //::  #endfor
     \

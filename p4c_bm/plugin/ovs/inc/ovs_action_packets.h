@@ -48,7 +48,7 @@
 //::    #endfor
 //::  #endfor
 //::
-/* -- Called in lib/packets.c -- */
+/* -- Called in lib/packets.h -- */
 #define OVS_FUNCTION_DECLS \
 //::  for header_name in ordered_header_instances_regular:
     void add_header_${header_name}(struct dp_packet *packet); \

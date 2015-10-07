@@ -54,7 +54,7 @@
     OFPACT(ADD_HEADER_${header_name.upper()}, ofpact_null, ofpact, "add_header_${header_name}") \
     OFPACT(REMOVE_HEADER_${header_name.upper()}, ofpact_null, ofpact, "remove_header_${header_name}") \
 //::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
-    OFPACT(MODIFY_FIELD_${field_name.upper()}, ofpact_null, ofpact, "modify_field_${field_name}") \
+//::      pass
 //::    #endfor
 //::  #endfor
     \
@@ -131,36 +131,7 @@
     } \
     \
 //::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
-    static enum ofperr \
-    decode_OFPAT_RAW_MODIFY_FIELD_${field_name.upper()}(struct ofpbuf *out) \
-    { \
-        ofpact_put_MODIFY_FIELD_${field_name.upper()}(out); \
-        return 0; \
-    } \
-    \
-    static void \
-    encode_MODIFY_FIELD_${field_name.upper()}(const struct ofpact_null *null OVS_UNUSED, \
-                         enum ofp_version ofp_version, struct ofpbuf *out) \
-    { \
-        if (ofp_version >= OFP15_VERSION) { \
-            put_OFPAT_MODIFY_FIELD_${field_name.upper()}(out); \
-        } \
-    } \
-    \
-    static char * OVS_WARN_UNUSED_RESULT \
-    parse_MODIFY_FIELD_${field_name.upper()}(char *arg OVS_UNUSED, struct ofpbuf *ofpacts, \
-                        enum ofputil_protocol *usable_protocols OVS_UNUSED) \
-    { \
-        ofpact_put_MODIFY_FIELD_${field_name.upper()}(ofpacts); \
-        return NULL; \
-    } \
-    \
-    static void \
-    format_MODIFY_FIELD_${field_name.upper()}(const struct ofpact_null *a OVS_UNUSED, struct ds *s) \
-    { \
-        ds_put_cstr(s, "modify_field_${field_name}"); \
-    } \
-    \
+//::      pass
 //::    #endfor
 //::  #endfor
     \
@@ -171,7 +142,7 @@
     case OFPACT_ADD_HEADER_${header_name.upper()}: \
     case OFPACT_REMOVE_HEADER_${header_name.upper()}: \
 //::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
-    case OFPACT_MODIFY_FIELD_${field_name.upper()}: \
+//::      pass
 //::    #endfor
 //::  #endfor
         return false; \
@@ -183,7 +154,7 @@
     case OFPACT_ADD_HEADER_${header_name.upper()}: \
     case OFPACT_REMOVE_HEADER_${header_name.upper()}: \
 //::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
-    case OFPACT_MODIFY_FIELD_${field_name.upper()}: \
+//::      pass
 //::    #endfor
 //::  #endfor
         return false; \
@@ -195,7 +166,7 @@
     case OFPACT_ADD_HEADER_${header_name.upper()}: \
     case OFPACT_REMOVE_HEADER_${header_name.upper()}: \
 //::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
-    case OFPACT_MODIFY_FIELD_${field_name.upper()}: \
+//::      pass
 //::    #endfor
 //::  #endfor
         return OVSINST_OFPIT11_APPLY_ACTIONS; \
@@ -207,7 +178,7 @@
     case OFPACT_ADD_HEADER_${header_name.upper()}: \
     case OFPACT_REMOVE_HEADER_${header_name.upper()}: \
 //::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
-    case OFPACT_MODIFY_FIELD_${field_name.upper()}: \
+//::      pass
 //::    #endfor
 //::  #endfor
         return 0; \
@@ -219,7 +190,7 @@
     case OFPACT_ADD_HEADER_${header_name.upper()}: \
     case OFPACT_REMOVE_HEADER_${header_name.upper()}: \
 //::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
-    case OFPACT_MODIFY_FIELD_${field_name.upper()}: \
+//::      pass
 //::    #endfor
 //::  #endfor
         return false; \
