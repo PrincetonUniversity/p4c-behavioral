@@ -92,10 +92,10 @@
     xlate_modify_field_${field_name}(struct xlate_ctx *ctx, \
                       const struct ofpact_modify_field_${field_name} *a) \
     { \
-        bool use_masked = ctx->xbridge->support.masked_set_action; \
         struct flow *flow = &ctx->xin->flow; \
         struct flow *base_flow = &ctx->base_flow; \
         /* TODO: check if this is necessary. */ \
+        bool use_masked = ctx->xbridge->support.masked_set_action; \
         ctx->xout->slow |= commit_odp_actions(flow, base_flow, \
                                               ctx->odp_actions, ctx->wc, \
                                               use_masked); \
