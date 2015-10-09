@@ -56,7 +56,7 @@
     \
 
 /* -- Called in datapath/linux/compat/include/linux/openvswitch.h -- */
-#define OVS_KEYS \
+#define OVS_KEY_STRUCTS \
 //::  for header_name in ordered_header_instances_regular:
     struct ovs_key_${header_name} { \
 //::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
@@ -69,7 +69,7 @@
 //::      elif bit_width == 64:
         ovs_be64 ${field_name}; \
 //::      else:
-        uint8_t ${field_name}[${bit_width}/8]; \
+        struct ${field_name}_t ${field_name}; \
 //::      #endif
 //::    #endfor
     }; \

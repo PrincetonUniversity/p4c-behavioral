@@ -49,14 +49,14 @@
 //::  #endfor
 //::
 /* -- Called in lib/odp-util.c -- */
-#define OVS_KEY_ATTRS_TO_STRING \
+#define OVS_KEY_ATTRS_TO_STRING_CASES \
 //::  for header_name in ordered_header_instances_regular:
     case OVS_KEY_ATTR_${header_name.upper()}: return "${header_name}"; \
 //::  #endfor
     \
 
 /* -- Called in lib/odp-util.c -- */
-#define OVS_FORMAT_ODP_KEY_ATTRS \
+#define OVS_FORMAT_ODP_KEY_ATTR_CASES \
 //::  for header_name in ordered_header_instances_regular:
     case OVS_KEY_ATTR_${header_name.upper()}: { \
         const struct ovs_key_${header_name} *key = nl_attr_get(a); \
@@ -72,8 +72,8 @@
 //::      elif bit_width == 64:
         format_be64(ds, "${field_name}", key->${field_name}, MASK(mask, ${field_name}), verbose); \
 //::      else:
-        format_be(ds, "${field_name}", key->${field_name}, MASK(mask, ${field_name}), \
-                  ${bit_width}/8, verbose); \
+        format_data(ds, "${field_name}", key->${field_name}.data, mask ? &mask->${field_name}.data : NULL, \
+                  sizeof(struct ${field_name}_t), verbose); \
 //::      #endif
 //::    #endfor
         ds_chomp(ds, ','); \
@@ -82,8 +82,8 @@
 //::  #endfor
     \
 
-/* -- Called in lib/odp-util.h -- */
-#define OVS_SET_FUNCTION_DECLS \
+/* -- Called in lib/odp-util.c -- */
+#define OVS_SET_FUNC_DECLS \
 //::  for header_name in ordered_header_instances_regular:
     static void \
     get_${header_name}_key(const struct flow *flow, struct ovs_key_${header_name} *${header_name}); \
@@ -93,18 +93,13 @@
 //::  #endfor
 
 /* -- Called in lib/odp-util.c -- */
-#define OVS_SET_FUNCTION_DEFS \
+#define OVS_SET_FUNC_DEFS \
 //::  for header_name in ordered_header_instances_regular:
     static void \
     get_${header_name}_key(const struct flow *flow, struct ovs_key_${header_name} *${header_name}) \
     { \
 //::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
-//::      if bit_width == 8 or bit_width == 16 or bit_width == 32 or bit_width == 64:
         ${header_name}->${field_name} = flow->${header_name}.hdr.${field_name}; \
-//::      else:
-        memcpy(${header_name}->${field_name}, flow->${header_name}.hdr.${field_name}, \
-               ${bit_width}/8); \
-//::      #endif
 //::    #endfor
     } \
     \
@@ -112,19 +107,14 @@
     put_${header_name}_key(const struct ovs_key_${header_name} *${header_name}, struct flow *flow) \
     { \
 //::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
-//::      if bit_width == 8 or bit_width == 16 or bit_width == 32 or bit_width == 64:
         flow->${header_name}.hdr.${field_name} = ${header_name}->${field_name}; \
-//::      else:
-        memcpy(flow->${header_name}.hdr.${field_name}, ${header_name}->${field_name}, \
-               ${bit_width}/8); \
-//::      #endif
 //::    #endfor
     } \
     \
 //::  #endfor
 
 /* -- Called in lib/odp-util.c -- */
-#define OVS_COMMIT_ACTIONS \
+#define OVS_COMMIT_ACTION_FUNCS \
 //::  for header_name in ordered_header_instances_regular:
     static void \
     commit_set_${header_name}_action(const struct flow *flow, struct flow *base_flow, \
@@ -148,7 +138,7 @@
 //::  #endfor
 
 /* -- Called in lib/odp-util.c -- */
-#define OVS_COMMIT_ODP_ACTIONS \
+#define OVS_COMMIT_ODP_ACTIONS_FUNCS \
 //::  for header_name in ordered_header_instances_regular:
     commit_set_${header_name}_action(flow, base, odp_actions, wc, use_masked); \
 //::  #endfor

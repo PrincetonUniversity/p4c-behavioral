@@ -49,7 +49,7 @@
 //::  #endfor
 //::
 /* -- Called in lib/meta-flow.c -- */
-#define OVS_GET_VALUE \
+#define OVS_GET_VALUE_CASES \
 //::  for header_name in ordered_header_instances_all:
 //::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
     case MFF_${field_name.upper()}: \
@@ -62,8 +62,8 @@
 //::      elif bit_width == 64:
         value->be64 = flow->${header_name}.hdr.${field_name}; \
 //::      else:
-        memcpy(value->data, flow->${header_name}.hdr.${field_name}, \
-               sizeof(flow->${header_name}.hdr.${field_name})); \
+        memcpy(value->data, flow->${header_name}.hdr.${field_name}.data, \
+               sizeof flow->${header_name}.hdr.${field_name}); \
 //::      #endif
         break; \
 //::    #endfor
@@ -71,7 +71,7 @@
     \
 
 /* -- Called in lib/meta-flow.c -- */
-#define OVS_IS_VALUE_VALID \
+#define OVS_IS_VALUE_VALID_CASES \
 //::  for field_name, _ in ordered_field_instances_all__name_width:
     case MFF_${field_name.upper()}: \
         return true; \
@@ -79,22 +79,22 @@
     \
 
 /* -- Called in lib/meta-flow.c -- */
-#define OVS_IS_ALL_WILD \
+#define OVS_IS_ALL_WILD_CASES \
 //::  for header_name in ordered_header_instances_all:
 //::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
     case MFF_${field_name.upper()}: \
 //::      if bit_width == 8 or bit_width == 16 or bit_width == 32 or bit_width == 64:
         return !wc->masks.${header_name}.hdr.${field_name}; \
 //::      else:
-        return is_all_zeros(wc->masks.${header_name}.hdr.${field_name}, \
-                            sizeof(wc->masks.${header_name}.hdr.${field_name})); \
+        return is_all_zeros(wc->masks.${header_name}.hdr.${field_name}.data, \
+                            sizeof wc->masks.${header_name}.hdr.${field_name}); \
 //::      #endif
 //::    #endfor
 //::  #endfor
     \
 
 /* -- Called in lib/meta-flow.c -- */
-#define OVS_SET_FLOW_VALUE \
+#define OVS_SET_FLOW_VALUE_CASES \
 //::  for header_name in ordered_header_instances_all:
 //::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
     case MFF_${field_name.upper()}: \
@@ -107,8 +107,8 @@
 //::      elif bit_width == 64:
         flow->${header_name}.hdr.${field_name} = value->be64; \
 //::      else:
-        memcpy(flow->${header_name}.hdr.${field_name}, value->data, \
-               sizeof(flow->${header_name}.hdr.${field_name})); \
+        memcpy(flow->${header_name}.hdr.${field_name}.data, value->data, \
+               sizeof flow->${header_name}.hdr.${field_name}); \
 //::      #endif
         break; \
 //::    #endfor
@@ -116,7 +116,7 @@
     \
 
 /* -- Called in lib/meta-flow.c -- */
-#define OVS_SET_VLAUE \
+#define OVS_SET_VLAUE_CASES \
 //::  for header_name in ordered_header_instances_all:
 //::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
     case MFF_${field_name.upper()}: \
@@ -133,10 +133,10 @@
         match->wc.masks.${header_name}.hdr.${field_name} = OVS_BE64_MAX; \
         match->flow.${header_name}.hdr.${field_name} = value->be64; \
 //::      else:
-        memset(match->wc.masks.${header_name}.hdr.${field_name}, 0xff, \
-               sizeof(match->wc.masks.${header_name}.hdr.${field_name})); \
-        memcpy(match->flow.${header_name}.hdr.${field_name}, value->data, \
-               sizeof(match->flow.${header_name}.hdr.${field_name})); \
+        memset(match->wc.masks.${header_name}.hdr.${field_name}.data, 0xff, \
+               sizeof match->wc.masks.${header_name}.hdr.${field_name}); \
+        memcpy(match->flow.${header_name}.hdr.${field_name}.data, value->data, \
+               sizeof match->flow.${header_name}.hdr.${field_name}); \
 //::      #endif
         break; \
 //::    #endfor
@@ -144,7 +144,7 @@
     \
 
 /* -- Called in lib/meta-flow.c -- */
-#define OVS_SET_WILD \
+#define OVS_SET_WILD_CASES \
 //::  for header_name in ordered_header_instances_all:
 //::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
     case MFF_${field_name.upper()}: \
@@ -152,10 +152,10 @@
         match->flow.${header_name}.hdr.${field_name} = 0; \
         match->wc.masks.${header_name}.hdr.${field_name} = 0; \
 //::      else:
-        memset(match->flow.${header_name}.hdr.${field_name}, 0, \
-               sizeof(match->flow.${header_name}.hdr.${field_name})); \
-        memset(match->wc.masks.${header_name}.hdr.${field_name}, 0, \
-               sizeof(match->wc.masks.${header_name}.hdr.${field_name})); \
+        memset(match->flow.${header_name}.hdr.${field_name}.data, 0, \
+               sizeof match->flow.${header_name}.hdr.${field_name}); \
+        memset(match->wc.masks.${header_name}.hdr.${field_name}.data, 0, \
+               sizeof match->wc.masks.${header_name}.hdr.${field_name}); \
 //::      #endif
         break; \
 //::    #endfor
@@ -163,7 +163,7 @@
     \
 
 /* -- Called in lib/meta-flow.c -- */
-#define OVS_SET \
+#define OVS_SET_CASES \
 //::  for header_name in ordered_header_instances_all:
 //::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
     case MFF_${field_name.upper()}: \
@@ -181,9 +181,9 @@
         match->wc.masks.${header_name}.hdr.${field_name} = mask->be64; \
 //::      else:
         set_masked(value->data, mask->data, \
-                   match->flow.${header_name}.hdr.${field_name}, \
-                   match->wc.masks.${header_name}.hdr.${field_name}, \
-                   sizeof(match->flow.${header_name}.hdr.${field_name})); \
+                   match->flow.${header_name}.hdr.${field_name}.data, \
+                   match->wc.masks.${header_name}.hdr.${field_name}.data, \
+                   sizeof match->flow.${header_name}.hdr.${field_name}); \
 //::      #endif
         break; \
 //::    #endfor

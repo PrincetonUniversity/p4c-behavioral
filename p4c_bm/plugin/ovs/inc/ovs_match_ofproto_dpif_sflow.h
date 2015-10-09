@@ -23,7 +23,7 @@
 #define	OVS_MATCH_OFPROTO_DPIF_SFLOW_H 1
 
 /* -- Called in ofproto/ofproto-dpif-sflow.h -- */
-#define OVS_SFLOW_READ_SET_ACTION \
+#define OVS_SFLOW_READ_SET_ACTION_CASES \
 //::  for header_name in ordered_header_instances_regular:
     case OVS_KEY_ATTR_${header_name.upper()}: \
         break; \

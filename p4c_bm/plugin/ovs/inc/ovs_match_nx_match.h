@@ -70,9 +70,9 @@
                 match->wc.masks.${header_name}.hdr.${field_name}); \
 //::      else:
     nxm_put(b, MFF_${field_name.upper()}, oxm, \
-            flow->${header_name}.hdr.${field_name}, \
-            match->wc.masks.${header_name}.hdr.${field_name}, \
-            sizeof(flow->${header_name}.hdr.${field_name})); \
+            flow->${header_name}.hdr.${field_name}.data, \
+            match->wc.masks.${header_name}.hdr.${field_name}.data, \
+            sizeof flow->${header_name}.hdr.${field_name}); \
 //::      #endif
 //::    #endfor
 //::  #endfor

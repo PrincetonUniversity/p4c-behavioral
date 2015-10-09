@@ -116,9 +116,9 @@
 //::                  #endif
 //::                elif bit_width <= 64:
 //::                  if mask:
-        (be_to_u64(packet->${header_name}.${field_name}) & ${hex(mask)}) >> ${bit_offset_hdr} == ${hex(byte_array_to_int(value))} \
+        (u${bit_width}_to_u64(packet->${header_name}.${field_name}.data) & ${hex(mask)}) >> ${bit_offset_hdr} == ${hex(byte_array_to_int(value))} \
 //::                  else:
-        be_to_u64(packet->${header_name}.${field_name}) == ${hex(byte_array_to_int(value))} \
+        u${bit_width}_to_u64(packet->${header_name}.${field_name}.data) == ${hex(byte_array_to_int(value))} \
 //::                  #endif
 //::                  # TODO: right now only covers up to 64 bits, look into how to extend this range.
 //::                else:

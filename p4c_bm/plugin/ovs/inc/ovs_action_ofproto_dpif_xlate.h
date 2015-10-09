@@ -94,7 +94,6 @@
     { \
         bool use_masked = ctx->xbridge->support.masked_set_action; \
         struct flow *flow = &ctx->xin->flow; \
-        struct flow *masks = &ctx->wc->masks; \
         struct flow *base_flow = &ctx->base_flow; \
         /* TODO: check if this is necessary. */ \
         ctx->xout->slow |= commit_odp_actions(flow, base_flow, \

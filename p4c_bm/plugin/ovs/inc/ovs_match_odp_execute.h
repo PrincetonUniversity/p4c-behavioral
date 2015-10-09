@@ -49,7 +49,7 @@
 //::  #endfor
 //::
 /* -- Called in lib/odp-execute.c -- */
-#define OVS_ODP_SET_ACTIONS \
+#define OVS_ODP_SET_ACTION_FUNCS \
 //::  for header_name in ordered_header_instances_regular:
     static void \
     odp_set_${header_name}(struct dp_packet *packet, const struct ovs_key_${header_name} *key, \
@@ -69,9 +69,9 @@
 //::      elif bit_width == 64:
             ovs_be64 ${field_name} = key->${field_name} | (${header_name}->${field_name} & ~mask->${field_name}); \
 //::      else:
-            uint8_t ${field_name}[${bit_width}/8]; \
-            ovs_apply_mask(key->${field_name}, ${header_name}->${field_name}, mask->${field_name}, \
-                ${field_name}, ${bit_width}/8); \
+            struct ${field_name}_t ${field_name}; \
+            ovs_apply_mask(key->${field_name}.data, ${header_name}->${field_name}.data, mask->${field_name}.data, \
+                ${field_name}.data, sizeof(struct ${field_name}_t)); \
 //::      #endif
 //::    #endfor
             \
@@ -86,7 +86,7 @@
 //::  #endfor
 
 /* -- Called in lib/odp-execute.c -- */
-#define OVS_ODP_EXECUTE_SET_ACTION \
+#define OVS_ODP_EXECUTE_SET_ACTION_CASES \
 //::  for header_name in ordered_header_instances_regular:
     case OVS_KEY_ATTR_${header_name.upper()}: \
         { \
@@ -103,7 +103,7 @@
     \
 
 /* -- Called in lib/odp-execute.c -- */
-#define OVS_ODP_EXECUTE_MASKED_SET_ACTION \
+#define OVS_ODP_EXECUTE_MASKED_SET_ACTION_CASES \
 //::  for header_name in ordered_header_instances_regular:
     case OVS_KEY_ATTR_${header_name.upper()}: \
         odp_set_${header_name}(packet, nl_attr_get(a), \

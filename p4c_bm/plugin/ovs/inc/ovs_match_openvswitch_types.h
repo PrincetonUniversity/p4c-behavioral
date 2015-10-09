@@ -15,12 +15,12 @@
  */
 
 /*
- * File:   ovs_match_match.h
+ * File:   ovs_match_openvswitch_types.h
  * Author: mshahbaz@cs.princeton.edu
  */
 
-#ifndef OVS_MATCH_MATCH_H
-#define	OVS_MATCH_MATCH_H 1
+#ifndef OVS_MATCH_OPENVSWITCH_TYPES_H
+#define	OVS_MATCH_OPENVSWITCH_TYPES_H 1
 
 //::  import math
 //::
@@ -48,30 +48,14 @@
 //::    #endfor
 //::  #endfor
 //::
-/* -- Called in lib/match.c -- */
-#define OVS_MATCH_FORMAT \
-//::  for header_name in ordered_header_instances_all:
-//::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
-//::      if bit_width == 8:
-    format_be8_masked(s, "${field_name}", f->${header_name}.hdr.${field_name}, \
-                      wc->masks.${header_name}.hdr.${field_name}); \
-//::      elif bit_width == 16:
-    format_be16_masked(s, "${field_name}", f->${header_name}.hdr.${field_name}, \
-                       wc->masks.${header_name}.hdr.${field_name}); \
-//::      elif bit_width == 32:
-    format_be32_masked(s, "${field_name}", f->${header_name}.hdr.${field_name}, \
-                       wc->masks.${header_name}.hdr.${field_name}); \
-//::      elif bit_width == 64:
-    format_be64_masked(s, "${field_name}", f->${header_name}.hdr.${field_name}, \
-                       wc->masks.${header_name}.hdr.${field_name}); \
-//::      else:
-    format_masked(s, "${field_name}", \
-                  f->${header_name}.hdr.${field_name}.data, \
-                  wc->masks.${header_name}.hdr.${field_name}.data, \
-                  sizeof f->${header_name}.hdr.${field_name}); \
-//::      #endif
-//::    #endfor
+/* -- Called in include/openvswitch/types.h -- */
+#define OVS_FIELD_STRUCTS \
+//::  for field_name, bit_width in ordered_field_instances_all__name_width:
+//::   if not (bit_width == 8 or bit_width == 16 or bit_width == 32 or bit_width == 64):
+    struct ${field_name}_t { \
+        uint8_t data[${bit_width}/8]; \
+    }; \
+//::    #endif
 //::  #endfor
-    \
 
-#endif	/* OVS_MATCH_MATCH_H */
+#endif	/* OVS_MATCH_OPENVSWITCH_TYPES_H */

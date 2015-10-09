@@ -55,7 +55,7 @@
 //::  #endfor
 
 /* -- Called in lib/packets.h -- */
-#define OVS_HEADERS \
+#define OVS_HDR_STRUCTS \
 //::  for header_name in ordered_header_instances_all:
 //::    run_bit_width = 0
     OVS_PACKED( \
@@ -70,7 +70,7 @@
 //::      elif bit_width == 64:
         ovs_be64 ${field_name}; \
 //::      else:
-        uint8_t ${field_name}[${bit_width}/8]; \
+        struct ${field_name}_t ${field_name}; \
 //::      #endif
 //::      run_bit_width += bit_width
 //::    #endfor
@@ -93,7 +93,7 @@
 //::  #endfor
 
 /* -- Called in lib/packets.h -- */
-#define OVS_HEADER_DECLS \
+#define OVS_HDR_DECLS \
 //::  for header_name in ordered_header_instances_regular:
     void packet_set_${header_name}( \
 //::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
@@ -106,7 +106,7 @@
 //::      elif bit_width == 64:
         ovs_be64 ${field_name}, \
 //::      else:
-        const uint8_t ${field_name}[${bit_width}/8], \
+        struct ${field_name}_t ${field_name}, \
 //::      #endif
 //::    #endfor
         struct dp_packet *packet); \
@@ -114,7 +114,7 @@
 //::  #endfor
 
 /* -- Called in lib/packets.c -- */
-#define OVS_HEADER_DEFS \
+#define OVS_HDR_DEFS \
 //::  for header_name in ordered_header_instances_regular:
     void packet_set_${header_name}( \
 //::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
@@ -127,7 +127,7 @@
 //::      elif bit_width == 64:
         ovs_be64 ${field_name}, \
 //::      else:
-        const uint8_t ${field_name}[${bit_width}/8], \
+        struct ${field_name}_t ${field_name}, \
 //::      #endif
 //::    #endfor
         struct dp_packet *packet) \
@@ -137,15 +137,7 @@
 //::    # TODO: this condition should be indicated back to the user, look into this.
         if (${header_name}) { \
 //::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
-//::      if bit_width == 8 or bit_width == 16 or bit_width == 32 or bit_width == 64:
-//::          #if (${header_name}->${field_name} != ${field_name}) { \
             ${header_name}->${field_name} = ${field_name}; \
-//::          #} \
-//::      else:
-//::          #if (memcmp(${header_name}->${field_name}, ${field_name}, ${bit_width}/8)) { \
-            memcpy(${header_name}->${field_name}, ${field_name}, ${bit_width}/8); \
-//::          #} \
-//::      #endif
 //::    #endfor
         } \
     } \
