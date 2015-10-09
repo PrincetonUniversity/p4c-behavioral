@@ -49,19 +49,19 @@
 //::  #endfor
 //::
 /* -- Called in lib/odp-util.c -- */
-#define OVS_ACTION_LEN \
+#define OVS_ACTION_LEN_CASES \
 //::  for header_name in ordered_header_instances_regular:
-    case OVS_ACTION_ATTR_ADD_HEADER_${header_name.upper()}: \
-    case OVS_ACTION_ATTR_REMOVE_HEADER_${header_name.upper()}: \
+    case OVS_ACTION_ATTR_ADD_HEADER_${header_name.upper()}: return 0; \
+    case OVS_ACTION_ATTR_REMOVE_HEADER_${header_name.upper()}: return 0; \
 //::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
-//::      pass
+    case OVS_ACTION_ATTR_MODIFY_FIELD_${field_name.upper()}: \
+        return sizeof(struct ovs_action_${field_name}); \
 //::    #endfor
 //::  #endfor
-        return 0; \
     \
 
 /* -- Called in lib/odp-util.c -- */
-#define OVS_FORMAT_ACTION \
+#define OVS_FORMAT_ODP_ACTION_CASES \
 //::  for header_name in ordered_header_instances_regular:
     case OVS_ACTION_ATTR_ADD_HEADER_${header_name.upper()}: \
         ds_put_cstr(ds, "add_header_${header_name}"); \
@@ -70,7 +70,19 @@
         ds_put_cstr(ds, "remove_header_${header_name}"); \
         break; \
 //::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
-//::      pass
+    case OVS_ACTION_ATTR_MODIFY_FIELD_${field_name.upper()}: { \
+        const struct ovs_action_${field_name} *oa = nl_attr_get(a); \
+        ds_put_cstr(ds, "modify_field_${field_name}("); \
+//::      if bit_width == 8 or bit_width == 16 or bit_width == 32 or bit_width == 64:
+        ds_put_hex(ds, &oa->value, sizeof(oa->value)); \
+        ds_put_char(ds, '/'); \
+        ds_put_hex(ds, &oa->mask, sizeof(oa->mask)); \
+//::      else:
+//::        pass  #TODO: implement this for other bit_widths.
+//::      #endif
+        ds_put_char(ds, ')'); \
+        break; \
+    } \
 //::    #endfor
 //::  #endfor
     \

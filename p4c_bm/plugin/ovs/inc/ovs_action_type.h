@@ -48,7 +48,7 @@
 //::    #endfor
 //::  #endfor
 //::
-//::  base_ofpat_offset = 33
+//::  base_ofpat_offset = 32
 //::  for header_name in ordered_header_instances_regular:
     /* OF1.5+(${base_ofpat_offset}): void. */
     OFPAT_RAW_ADD_HEADER_${header_name.upper()},
@@ -59,7 +59,10 @@
 //::  base_ofpat_offset += 1
 
 //::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
-//::      pass
+    /* OF1.5+(${base_ofpat_offset}): struct ofp_action_modify_field_${field_name}. */
+    OFPAT_RAW_MODIFY_FIELD_${field_name.upper()},
+//::  base_ofpat_offset += 1
+
 //::    #endfor
 //::  #endfor
 /* Do NOT REMOVE THIS. */

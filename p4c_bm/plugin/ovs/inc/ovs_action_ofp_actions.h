@@ -54,21 +54,79 @@
     OFPACT(ADD_HEADER_${header_name.upper()}, ofpact_null, ofpact, "add_header_${header_name}") \
     OFPACT(REMOVE_HEADER_${header_name.upper()}, ofpact_null, ofpact, "remove_header_${header_name}") \
 //::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
-//::      pass
+    OFPACT(MODIFY_FIELD_${field_name.upper()}, ofpact_modify_field_${field_name}, ofpact, "modify_field_${field_name}") \
 //::    #endfor
 //::  #endfor
     \
 
 /* -- Called in lib/ofp-actions.h -- */
 #define OVS_OFPACT_STRUCTS \
+//::  for header_name in ordered_header_instances_regular:
+//::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
+    struct ofpact_modify_field_${field_name} { \
+        struct ofpact ofpact; \
+//::      if bit_width == 8:
+        uint8_t value; \
+        uint8_t mask; \
+//::      elif bit_width == 16:
+        ovs_be16 value; \
+        ovs_be16 mask; \
+//::      elif bit_width == 32:
+        ovs_be32 value; \
+        ovs_be32 mask; \
+//::      elif bit_width == 64:
+        ovs_be64 value; \
+        ovs_be64 mask; \
+//::      else:
+//::        pass  #TODO: implement this for other bit_widths.
+//::      #endif
+    }; \
     \
+//::    #endfor
+//::  #endfor
 
 /* -- Called in lib/ofp-actions.c -- */
-#define OVS_STRUCTS \
+#define OVS_OFP_ACTION_STRUCTS \
+//::  for header_name in ordered_header_instances_regular:
+//::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
+    struct ofp_action_modify_field_${field_name} { \
+        ovs_be16 type; \
+        ovs_be16 len; \
+//::      if bit_width == 8:
+        uint8_t value; \
+        uint8_t mask; \
+        uint8_t pad[2]; \
+    }; \
+    OFP_ASSERT(sizeof(struct ofp_action_modify_field_${field_name}) == 8); \
+//::      elif bit_width == 16:
+        ovs_be16 value; \
+        ovs_be16 mask; \
+    }; \
+    OFP_ASSERT(sizeof(struct ofp_action_modify_field_${field_name}) == 8); \
+//::      elif bit_width == 32:
+        ovs_be32 value; \
+        ovs_be32 mask; \
+        uint8_t pad[4]; \
+    }; \
+    OFP_ASSERT(sizeof(struct ofp_action_modify_field_${field_name}) == 16); \
+//::      elif bit_width == 64:
+        ovs_be64 value; \
+        ovs_be64 mask; \
+        uint8_t pad[4]; \
+    }; \
+    OFP_ASSERT(sizeof(struct ofp_action_modify_field_${field_name}) == 24); \
+//::      else:
+//::        pass  #TODO: implement this for other bit_widths.
+        uint8_t pad[4]; \
+    }; \
+    OFP_ASSERT(sizeof(struct ofp_action_modify_field_${field_name}) == 8); \
+//::      #endif
     \
+//::    #endfor
+//::  #endfor
 
 /* -- Called in lib/ofp-actions.c -- */
-#define OVS_FUNCTIONS \
+#define OVS_OFP_FUNCS \
 //::  for header_name in ordered_header_instances_regular:
     static enum ofperr \
     decode_OFPAT_RAW_ADD_HEADER_${header_name.upper()}(struct ofpbuf *out) \
@@ -131,66 +189,120 @@
     } \
     \
 //::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
-//::      pass
+    static enum ofperr \
+    decode_OFPAT_RAW_MODIFY_FIELD_${field_name.upper()}(const struct ofp_action_modify_field_${field_name} *a, \
+                                 struct ofpbuf *out) \
+    { \
+        struct ofpact_modify_field_${field_name}* oa = ofpact_put_MODIFY_FIELD_${field_name.upper()}(out); \
+//::      if bit_width == 8 or bit_width == 16 or bit_width == 32 or bit_width == 64:
+        oa->value = a->value; \
+        oa->mask = a->mask; \
+//::      else:
+//::        pass  #TODO: implement this for other bit_widths.
+//::      #endif
+        return 0; \
+    } \
+    \
+    static void \
+    encode_MODIFY_FIELD_${field_name.upper()}(const struct ofpact_modify_field_${field_name} *oa, \
+                       enum ofp_version ofp_version, struct ofpbuf *out) \
+    { \
+        if (ofp_version >= OFP15_VERSION) { \
+            struct ofp_action_modify_field_${field_name} *a; \
+            a = put_OFPAT_MODIFY_FIELD_${field_name.upper()}(out); \
+//::      if bit_width == 8 or bit_width == 16 or bit_width == 32 or bit_width == 64:
+            a->value = oa->value; \
+            a->mask = oa->mask; \
+//::      else:
+//::        pass  #TODO: implement this for other bit_widths.
+//::      #endif
+        } \
+    } \
+    \
+    static char * OVS_WARN_UNUSED_RESULT \
+    parse_MODIFY_FIELD_${field_name.upper()}(char *arg, struct ofpbuf *ofpacts, \
+                   enum ofputil_protocol *usable_protocols OVS_UNUSED) \
+    { \
+        struct ofpact_modify_field_${field_name}* oa = ofpact_put_MODIFY_FIELD_${field_name.upper()}(ofpacts); \
+//::      if bit_width == 8 or bit_width == 16 or bit_width == 32 or bit_width == 64:
+        return parse_from_integer_string(arg, "${field_name}", sizeof(oa->value), \
+                                         (uint8_t *) &oa->value, (uint8_t *) &oa->mask); \
+//::      else:
+//::        pass  #TODO: implement this for other bit_widths.
+//::      #endif
+    } \
+    \
+    static void \
+    format_MODIFY_FIELD_${field_name.upper()}(const struct ofpact_modify_field_${field_name} *oa, struct ds *s) \
+    { \
+//::      if bit_width == 8 or bit_width == 16 or bit_width == 32 or bit_width == 64:
+        ds_put_cstr(s, "modify_field_${field_name}:"); \
+        ds_put_hex(s, &oa->value, sizeof(oa->value)); \
+        ds_put_char(s, '/'); \
+        ds_put_hex(s, &oa->mask, sizeof(oa->mask)); \
+//::      else:
+//::        pass  #TODO: implement this for other bit_widths.
+//::      #endif
+    } \
+    \
 //::    #endfor
 //::  #endfor
-    \
 
 /* -- Called in lib/ofp-actions.c -- */
-#define OVS_IS_SET_OR_MOVE_ACTION \
+#define OVS_IS_SET_OR_MOVE_ACTION_CASES \
 //::  for header_name in ordered_header_instances_regular:
     case OFPACT_ADD_HEADER_${header_name.upper()}: \
     case OFPACT_REMOVE_HEADER_${header_name.upper()}: \
 //::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
-//::      pass
+    case OFPACT_MODIFY_FIELD_${field_name.upper()}: \
 //::    #endfor
 //::  #endfor
         return false; \
     \
 
 /* -- Called in lib/ofp-actions.c -- */
-#define OVS_IS_ALLOWED_IN_ACTIONS_SET \
+#define OVS_IS_ALLOWED_IN_ACTIONS_SET_CASES \
 //::  for header_name in ordered_header_instances_regular:
     case OFPACT_ADD_HEADER_${header_name.upper()}: \
     case OFPACT_REMOVE_HEADER_${header_name.upper()}: \
 //::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
-//::      pass
+    case OFPACT_MODIFY_FIELD_${field_name.upper()}: \
 //::    #endfor
 //::  #endfor
         return false; \
     \
 
 /* -- Called in lib/ofp-actions.c -- */
-#define OVS_INSTRUCTION_TYPE_FROM_OFPACT_TYPE \
+#define OVS_INSTRUCTION_TYPE_FROM_OFPACT_TYPE_CASES \
 //::  for header_name in ordered_header_instances_regular:
     case OFPACT_ADD_HEADER_${header_name.upper()}: \
     case OFPACT_REMOVE_HEADER_${header_name.upper()}: \
 //::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
-//::      pass
+    case OFPACT_MODIFY_FIELD_${field_name.upper()}: \
 //::    #endfor
 //::  #endfor
         return OVSINST_OFPIT11_APPLY_ACTIONS; \
     \
 
 /* -- Called in lib/ofp-actions.c -- */
-#define OVS_CHECK__ \
+#define OVS_CHECK___CASES \
 //::  for header_name in ordered_header_instances_regular:
     case OFPACT_ADD_HEADER_${header_name.upper()}: \
     case OFPACT_REMOVE_HEADER_${header_name.upper()}: \
 //::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
-//::      pass
+    case OFPACT_MODIFY_FIELD_${field_name.upper()}: \
 //::    #endfor
 //::  #endfor
         return 0; \
     \
 
 /* -- Called in lib/ofp-actions.c -- */
-#define OVS_OUTPUTS_TO_PORT \
+#define OVS_OUTPUTS_TO_PORT_CASES \
 //::  for header_name in ordered_header_instances_regular:
     case OFPACT_ADD_HEADER_${header_name.upper()}: \
     case OFPACT_REMOVE_HEADER_${header_name.upper()}: \
 //::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
-//::      pass
+    case OFPACT_MODIFY_FIELD_${field_name.upper()}: \
 //::    #endfor
 //::  #endfor
         return false; \

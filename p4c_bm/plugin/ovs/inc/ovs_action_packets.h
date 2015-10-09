@@ -49,7 +49,7 @@
 //::  #endfor
 //::
 /* -- Called in lib/packets.h -- */
-#define OVS_FUNCTION_DECLS \
+#define OVS_FUNC_DECLS \
 //::  for header_name in ordered_header_instances_regular:
     void add_header_${header_name}(struct dp_packet *packet); \
     void remove_header_${header_name}(struct dp_packet *packet); \
@@ -60,7 +60,7 @@
     \
 
 /* -- Called in lib/packets.c -- */
-#define OVS_FUNCTION_DEFS \
+#define OVS_FUNC_DEFS \
 //::  for header_name in ordered_header_instances_regular:
     void add_header_${header_name}(struct dp_packet *packet) \
     { \

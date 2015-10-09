@@ -49,7 +49,27 @@
 //::  #endfor
 //::
 /* -- Called in lib/odp-execute.c -- */
-#define OVS_ODP_EXECUTE_ACTIONS \
+#define OVS_ODP_EXECUTE_FUNCS \
+//::  for header_name in ordered_header_instances_regular:
+//::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
+    static void \
+    odp_execute_modify_field_${field_name}(struct dp_packet *packet, \
+                            const struct nlattr *a) \
+    { \
+        const struct ovs_action_${field_name} *oa = nl_attr_get(a); \
+//::      if bit_width == 8 or bit_width == 16 or bit_width == 32 or bit_width == 64:
+        packet->${header_name}.${field_name} = oa->value | (packet->${header_name}.${field_name} & ~oa->mask); \
+//::      else:
+//::        pass # TODO: implement this of other bit_widths.
+//::      #endif
+    } \
+    \
+//::    #endfor
+//::  #endfor
+
+
+/* -- Called in lib/odp-execute.c -- */
+#define OVS_ODP_EXECUTE_ACTIONS_CASES \
 //::  for header_name in ordered_header_instances_regular:
     case OVS_ACTION_ATTR_ADD_HEADER_${header_name.upper()}: \
         for (i = 0; i < cnt; i++) { \
@@ -62,20 +82,25 @@
         } \
         break; \
 //::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
-//::      pass
+    case OVS_ACTION_ATTR_MODIFY_FIELD_${field_name.upper()}: \
+        for (i = 0; i < cnt; i++) { \
+            odp_execute_modify_field_${field_name}(packets[i], a); \
+        } \
+        break; \
 //::    #endfor
 //::  #endfor
     \
 
 /* -- Called in lib/odp-execute.c -- */
-#define OVS_REQUIRES_DATAPATH_ASSISTANCE \
+#define OVS_REQUIRES_DATAPATH_ASSISTANCE_CASES \
 //::  for header_name in ordered_header_instances_regular:
     case OVS_ACTION_ATTR_ADD_HEADER_${header_name.upper()}: \
     case OVS_ACTION_ATTR_REMOVE_HEADER_${header_name.upper()}: \
 //::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
-//::      pass
+    case OVS_ACTION_ATTR_MODIFY_FIELD_${field_name.upper()}: \
 //::    #endfor
 //::  #endfor
+        return false; \
     \
 
 #endif	/* OVS_ACTION_ODP_EXECUTE_H */
