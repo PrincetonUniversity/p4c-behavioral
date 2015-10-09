@@ -53,36 +53,11 @@
 //::  for header_name in ordered_header_instances_regular:
     OVS_ACTION_ATTR_ADD_HEADER_${header_name.upper()}, \
     OVS_ACTION_ATTR_REMOVE_HEADER_${header_name.upper()}, \
-//::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
-    OVS_ACTION_ATTR_MODIFY_FIELD_${field_name.upper()}, \
-//::    #endfor
 //::  #endfor
     \
 
 /* -- Called in datapath/linux/compat/include/linux/openvswitch.h -- */
 #define OVS_ACTION_STRUCTS \
-//::  for header_name in ordered_header_instances_regular:
-//::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
-    struct ovs_action_modify_field_${field_name} { \
-//::      if bit_width == 8:
-        uint8_t value; \
-        uint8_t mask; \
-//::      elif bit_width == 16:
-        ovs_be16 value; \
-        ovs_be16 mask; \
-//::      elif bit_width == 32:
-        ovs_be32 value; \
-        ovs_be32 mask; \
-//::      elif bit_width == 64:
-        ovs_be64 value; \
-        ovs_be64 mask; \
-//::      else:
-        struct ${field_name}_t value; \
-        struct ${field_name}_t mask; \
-//::      #endif
-    }; \
     \
-//::    #endfor
-//::  #endfor
 
 #endif	/* OVS_ACTION_OPENVSWITCH_H */

@@ -57,12 +57,9 @@
 //::  for header_name in ordered_header_instances_regular:
     case OFPACT_ADD_HEADER_${header_name.upper()}: \
     case OFPACT_REMOVE_HEADER_${header_name.upper()}: \
-//::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
-    case OFPACT_MODIFY_FIELD_${field_name.upper()}: \
-//::    #endfor
-//::  #endfor
         break; \
     \
+//::  #endfor
 
 /* -- Called in ofproto/ofproto-dpif-xlate.c -- */
 #define OVS_COMPOSE_AND_XLATE_FUNCS \
@@ -87,41 +84,6 @@
         nl_msg_put_flag(ctx->odp_actions, OVS_ACTION_ATTR_REMOVE_HEADER_${header_name.upper()}); \
     } \
     \
-//::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
-    static void \
-    xlate_modify_field_${field_name}(struct xlate_ctx *ctx, \
-                      const struct ofpact_modify_field_${field_name} *a) \
-    { \
-        struct flow *flow = &ctx->xin->flow; \
-        struct flow *base_flow = &ctx->base_flow; \
-        /* TODO: check if this is necessary. */ \
-        bool use_masked = ctx->xbridge->support.masked_set_action; \
-        ctx->xout->slow |= commit_odp_actions(flow, base_flow, \
-                                              ctx->odp_actions, ctx->wc, \
-                                              use_masked); \
-        \
-        apply_mask((const uint8_t *) &a->value, (const uint8_t *) &a->mask, \
-                   (uint8_t *) &flow->${header_name}.hdr.${field_name}, \
-                   sizeof flow->${header_name}.hdr.${field_name}); \
-        \
-//::      if bit_width == 8 or bit_width == 16 or bit_width == 32 or bit_width == 64:
-        if (flow->${header_name}.hdr.${field_name} != base_flow->${header_name}.hdr.${field_name}) \
-//::      else:
-        if (memcmp(&flow->${header_name}.hdr.${field_name}, &base_flow->${header_name}.hdr.${field_name}, \
-                   sizeof flow->${header_name}.hdr.${field_name})) \
-//::      #endif
-        { \
-            struct ovs_action_modify_field_${field_name} *oa; \
-            oa = nl_msg_put_unspec_uninit(ctx->odp_actions, \
-                                          OVS_ACTION_ATTR_MODIFY_FIELD_${field_name.upper()}, \
-                                          sizeof *oa); \
-            oa->value = flow->${header_name}.hdr.${field_name}; \
-            oa->mask = a->mask; \
-            base_flow->${header_name}.hdr.${field_name} = flow->${header_name}.hdr.${field_name}; \
-        } \
-    } \
-    \
-//::    #endfor
 //::  #endfor
 
 /* -- Called in ofproto/ofproto-dpif-xlate.c -- */
@@ -133,11 +95,6 @@
     case OFPACT_REMOVE_HEADER_${header_name.upper()}: \
         compose_remove_header_${header_name}(ctx); \
         break; \
-//::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
-    case OFPACT_MODIFY_FIELD_${field_name.upper()}: \
-        xlate_modify_field_${field_name}(ctx, ofpact_get_MODIFY_FIELD_${field_name.upper()}(a)); \
-        break; \
-//::    #endfor
 //::  #endfor
     \
 
