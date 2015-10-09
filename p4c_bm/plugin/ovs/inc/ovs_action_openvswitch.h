@@ -63,7 +63,7 @@
 #define OVS_ACTION_STRUCTS \
 //::  for header_name in ordered_header_instances_regular:
 //::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
-    struct ovs_action_${field_name} { \
+    struct ovs_action_modify_field_${field_name} { \
 //::      if bit_width == 8:
         uint8_t value; \
         uint8_t mask; \
@@ -77,7 +77,8 @@
         ovs_be64 value; \
         ovs_be64 mask; \
 //::      else:
-//::        pass  #TODO: implement this for other bit_widths.
+        struct ${field_name}_t value; \
+        struct ${field_name}_t mask; \
 //::      #endif
     }; \
     \

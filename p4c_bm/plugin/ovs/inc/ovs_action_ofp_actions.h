@@ -78,7 +78,8 @@
         ovs_be64 value; \
         ovs_be64 mask; \
 //::      else:
-//::        pass  #TODO: implement this for other bit_widths.
+        struct ${field_name}_t value; \
+        struct ${field_name}_t mask; \
 //::      #endif
     }; \
     \
@@ -116,10 +117,18 @@
     }; \
     OFP_ASSERT(sizeof(struct ofp_action_modify_field_${field_name}) == 24); \
 //::      else:
-//::        pass  #TODO: implement this for other bit_widths.
-        uint8_t pad[4]; \
+        struct ${field_name}_t value; \
+        struct ${field_name}_t mask; \
+//::    bit_width = 2*bit_width + 32  # (bits from type and len)
+//::    pad_bits = 64 - (bit_width % 64)
+//::    pad_bytes = 0
+//::    if pad_bits < 64:
+//::      pad_bytes = pad_bits/8
+        uint8_t pad[${pad_bytes}]; \
+//::    #endif
+//::    total_bytes = (bit_width/8) + pad_bytes
     }; \
-    OFP_ASSERT(sizeof(struct ofp_action_modify_field_${field_name}) == 8); \
+    OFP_ASSERT(sizeof(struct ofp_action_modify_field_${field_name}) == ${total_bytes}); \
 //::      #endif
     \
 //::    #endfor
@@ -194,12 +203,8 @@
                                  struct ofpbuf *out) \
     { \
         struct ofpact_modify_field_${field_name}* oa = ofpact_put_MODIFY_FIELD_${field_name.upper()}(out); \
-//::      if bit_width == 8 or bit_width == 16 or bit_width == 32 or bit_width == 64:
         oa->value = a->value; \
         oa->mask = a->mask; \
-//::      else:
-//::        pass  #TODO: implement this for other bit_widths.
-//::      #endif
         return 0; \
     } \
     \
@@ -210,12 +215,8 @@
         if (ofp_version >= OFP15_VERSION) { \
             struct ofp_action_modify_field_${field_name} *a; \
             a = put_OFPAT_MODIFY_FIELD_${field_name.upper()}(out); \
-//::      if bit_width == 8 or bit_width == 16 or bit_width == 32 or bit_width == 64:
             a->value = oa->value; \
             a->mask = oa->mask; \
-//::      else:
-//::        pass  #TODO: implement this for other bit_widths.
-//::      #endif
         } \
     } \
     \
@@ -224,25 +225,17 @@
                    enum ofputil_protocol *usable_protocols OVS_UNUSED) \
     { \
         struct ofpact_modify_field_${field_name}* oa = ofpact_put_MODIFY_FIELD_${field_name.upper()}(ofpacts); \
-//::      if bit_width == 8 or bit_width == 16 or bit_width == 32 or bit_width == 64:
         return parse_from_integer_string(arg, "${field_name}", sizeof(oa->value), \
                                          (uint8_t *) &oa->value, (uint8_t *) &oa->mask); \
-//::      else:
-//::        pass  #TODO: implement this for other bit_widths.
-//::      #endif
     } \
     \
     static void \
     format_MODIFY_FIELD_${field_name.upper()}(const struct ofpact_modify_field_${field_name} *oa, struct ds *s) \
     { \
-//::      if bit_width == 8 or bit_width == 16 or bit_width == 32 or bit_width == 64:
         ds_put_cstr(s, "modify_field_${field_name}:"); \
         ds_put_hex(s, &oa->value, sizeof(oa->value)); \
         ds_put_char(s, '/'); \
         ds_put_hex(s, &oa->mask, sizeof(oa->mask)); \
-//::      else:
-//::        pass  #TODO: implement this for other bit_widths.
-//::      #endif
     } \
     \
 //::    #endfor

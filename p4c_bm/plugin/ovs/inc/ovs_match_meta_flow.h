@@ -62,7 +62,7 @@
 //::      elif bit_width == 64:
         value->be64 = flow->${header_name}.hdr.${field_name}; \
 //::      else:
-        memcpy(value->data, flow->${header_name}.hdr.${field_name}.data, \
+        memcpy(value->data, &flow->${header_name}.hdr.${field_name}, \
                sizeof flow->${header_name}.hdr.${field_name}); \
 //::      #endif
         break; \
@@ -86,7 +86,7 @@
 //::      if bit_width == 8 or bit_width == 16 or bit_width == 32 or bit_width == 64:
         return !wc->masks.${header_name}.hdr.${field_name}; \
 //::      else:
-        return is_all_zeros(wc->masks.${header_name}.hdr.${field_name}.data, \
+        return is_all_zeros(&wc->masks.${header_name}.hdr.${field_name}, \
                             sizeof wc->masks.${header_name}.hdr.${field_name}); \
 //::      #endif
 //::    #endfor
@@ -107,7 +107,7 @@
 //::      elif bit_width == 64:
         flow->${header_name}.hdr.${field_name} = value->be64; \
 //::      else:
-        memcpy(flow->${header_name}.hdr.${field_name}.data, value->data, \
+        memcpy(&flow->${header_name}.hdr.${field_name}, value->data, \
                sizeof flow->${header_name}.hdr.${field_name}); \
 //::      #endif
         break; \
@@ -133,9 +133,9 @@
         match->wc.masks.${header_name}.hdr.${field_name} = OVS_BE64_MAX; \
         match->flow.${header_name}.hdr.${field_name} = value->be64; \
 //::      else:
-        memset(match->wc.masks.${header_name}.hdr.${field_name}.data, 0xff, \
+        memset(&match->wc.masks.${header_name}.hdr.${field_name}, 0xff, \
                sizeof match->wc.masks.${header_name}.hdr.${field_name}); \
-        memcpy(match->flow.${header_name}.hdr.${field_name}.data, value->data, \
+        memcpy(&match->flow.${header_name}.hdr.${field_name}, value->data, \
                sizeof match->flow.${header_name}.hdr.${field_name}); \
 //::      #endif
         break; \
@@ -152,9 +152,9 @@
         match->flow.${header_name}.hdr.${field_name} = 0; \
         match->wc.masks.${header_name}.hdr.${field_name} = 0; \
 //::      else:
-        memset(match->flow.${header_name}.hdr.${field_name}.data, 0, \
+        memset(&match->flow.${header_name}.hdr.${field_name}, 0, \
                sizeof match->flow.${header_name}.hdr.${field_name}); \
-        memset(match->wc.masks.${header_name}.hdr.${field_name}.data, 0, \
+        memset(&match->wc.masks.${header_name}.hdr.${field_name}, 0, \
                sizeof match->wc.masks.${header_name}.hdr.${field_name}); \
 //::      #endif
         break; \
@@ -181,8 +181,8 @@
         match->wc.masks.${header_name}.hdr.${field_name} = mask->be64; \
 //::      else:
         set_masked(value->data, mask->data, \
-                   match->flow.${header_name}.hdr.${field_name}.data, \
-                   match->wc.masks.${header_name}.hdr.${field_name}.data, \
+                   (uint8_t *) &match->flow.${header_name}.hdr.${field_name}, \
+                   (uint8_t *) &match->wc.masks.${header_name}.hdr.${field_name}, \
                    sizeof match->flow.${header_name}.hdr.${field_name}); \
 //::      #endif
         break; \

@@ -56,11 +56,13 @@
     odp_execute_modify_field_${field_name}(struct dp_packet *packet, \
                             const struct nlattr *a) \
     { \
-        const struct ovs_action_${field_name} *oa = nl_attr_get(a); \
+        const struct ovs_action_modify_field_${field_name} *oa = nl_attr_get(a); \
 //::      if bit_width == 8 or bit_width == 16 or bit_width == 32 or bit_width == 64:
         packet->${header_name}.${field_name} = oa->value | (packet->${header_name}.${field_name} & ~oa->mask); \
 //::      else:
-//::        pass # TODO: implement this of other bit_widths.
+        apply_mask((const uint8_t *) &oa->value, (const uint8_t *) &oa->mask, \
+                   (uint8_t *) &packet->${header_name}.${field_name}, \
+                   sizeof packet->${header_name}.${field_name}); \
 //::      #endif
     } \
     \

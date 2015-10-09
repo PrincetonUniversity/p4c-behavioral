@@ -100,14 +100,18 @@
                                               ctx->odp_actions, ctx->wc, \
                                               use_masked); \
         \
-//::      if bit_width == 8 or bit_width == 16 or bit_width == 32 or bit_width == 64:
         apply_mask((const uint8_t *) &a->value, (const uint8_t *) &a->mask, \
-               (uint8_t *) &flow->${header_name}.hdr.${field_name}, \
-               sizeof(flow->${header_name}.hdr.${field_name})); \
+                   (uint8_t *) &flow->${header_name}.hdr.${field_name}, \
+                   sizeof flow->${header_name}.hdr.${field_name}); \
         \
+//::      if bit_width == 8 or bit_width == 16 or bit_width == 32 or bit_width == 64:
         if (flow->${header_name}.hdr.${field_name} != base_flow->${header_name}.hdr.${field_name}) \
+//::      else:
+        if (memcmp(&flow->${header_name}.hdr.${field_name}, &base_flow->${header_name}.hdr.${field_name}, \
+                   sizeof flow->${header_name}.hdr.${field_name})) \
+//::      #endif
         { \
-            struct ovs_action_ethernet__etherType *oa; \
+            struct ovs_action_modify_field_${field_name} *oa; \
             oa = nl_msg_put_unspec_uninit(ctx->odp_actions, \
                                           OVS_ACTION_ATTR_MODIFY_FIELD_${field_name.upper()}, \
                                           sizeof *oa); \
@@ -115,9 +119,6 @@
             oa->mask = a->mask; \
             base_flow->${header_name}.hdr.${field_name} = flow->${header_name}.hdr.${field_name}; \
         } \
-//::      else:
-//::        pass  #TODO: implement this for other bit_widths.
-//::      #endif
     } \
     \
 //::    #endfor

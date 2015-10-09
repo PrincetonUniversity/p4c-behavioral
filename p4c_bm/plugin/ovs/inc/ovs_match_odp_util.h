@@ -72,8 +72,9 @@
 //::      elif bit_width == 64:
         format_be64(ds, "${field_name}", key->${field_name}, MASK(mask, ${field_name}), verbose); \
 //::      else:
-        format_data(ds, "${field_name}", key->${field_name}.data, mask ? &mask->${field_name}.data : NULL, \
-                  sizeof(struct ${field_name}_t), verbose); \
+        format_custom(ds, "${field_name}", (const uint8_t *) &key->${field_name}, \
+                      mask ? (const uint8_t (*)[]) &mask->${field_name} : NULL, \
+                      sizeof(struct ${field_name}_t), verbose); \
 //::      #endif
 //::    #endfor
         ds_chomp(ds, ','); \

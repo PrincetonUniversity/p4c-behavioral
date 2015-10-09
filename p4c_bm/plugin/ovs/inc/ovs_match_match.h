@@ -66,8 +66,8 @@
                        wc->masks.${header_name}.hdr.${field_name}); \
 //::      else:
     format_masked(s, "${field_name}", \
-                  f->${header_name}.hdr.${field_name}.data, \
-                  wc->masks.${header_name}.hdr.${field_name}.data, \
+                  (const uint8_t *) &f->${header_name}.hdr.${field_name}, \
+                  (const uint8_t *) &wc->masks.${header_name}.hdr.${field_name}, \
                   sizeof f->${header_name}.hdr.${field_name}); \
 //::      #endif
 //::    #endfor
