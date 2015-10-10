@@ -50,22 +50,28 @@
 //::
 /* -- Called in lib/odp-util.c -- */
 #define OVS_ACTION_LEN_CASES \
-//::  for header_name in ordered_header_instances_regular:
-    case OVS_ACTION_ATTR_ADD_HEADER_${header_name.upper()}: return 0; \
-    case OVS_ACTION_ATTR_REMOVE_HEADER_${header_name.upper()}: return 0; \
-//::  #endfor
     \
 
 /* -- Called in lib/odp-util.c -- */
 #define OVS_FORMAT_ODP_ACTION_CASES \
-//::  for header_name in ordered_header_instances_regular:
-    case OVS_ACTION_ATTR_ADD_HEADER_${header_name.upper()}: \
-        ds_put_cstr(ds, "add_header_${header_name}"); \
-        break; \
-    case OVS_ACTION_ATTR_REMOVE_HEADER_${header_name.upper()}: \
-        ds_put_cstr(ds, "remove_header_${header_name}"); \
-        break; \
-//::  #endfor
     \
+
+/* -- Called in lib/odp-util.c -- */
+#define OVS_FORMAT_ODP_ACTION_ADD_HEADER_CASES \
+//::  for header_name in ordered_header_instances_regular:
+    case OVS_KEY_ATTR_${header_name.upper()}: \
+        ds_put_cstr(ds, "${header_name}"); \
+        break; \
+    \
+//::  #endfor
+
+/* -- Called in lib/odp-util.c -- */
+#define OVS_FORMAT_ODP_ACTION_REMOVE_HEADER_CASES \
+//::  for header_name in ordered_header_instances_regular:
+    case OVS_KEY_ATTR_${header_name.upper()}: \
+        ds_put_cstr(ds, "${header_name}"); \
+        break; \
+    \
+//::  #endfor
 
 #endif	/* OVS_ACTION_ODP_UTIL_H */

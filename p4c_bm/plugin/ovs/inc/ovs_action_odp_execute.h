@@ -54,27 +54,10 @@
 
 /* -- Called in lib/odp-execute.c -- */
 #define OVS_ODP_EXECUTE_ACTIONS_CASES \
-//::  for header_name in ordered_header_instances_regular:
-    case OVS_ACTION_ATTR_ADD_HEADER_${header_name.upper()}: \
-        for (i = 0; i < cnt; i++) { \
-            add_header_${header_name}(packets[i]); \
-        } \
-        break; \
-    case OVS_ACTION_ATTR_REMOVE_HEADER_${header_name.upper()}: \
-        for (i = 0; i < cnt; i++) { \
-            remove_header_${header_name}(packets[i]); \
-        } \
-        break; \
-//::  #endfor
     \
 
 /* -- Called in lib/odp-execute.c -- */
 #define OVS_REQUIRES_DATAPATH_ASSISTANCE_CASES \
-//::  for header_name in ordered_header_instances_regular:
-    case OVS_ACTION_ATTR_ADD_HEADER_${header_name.upper()}: \
-    case OVS_ACTION_ATTR_REMOVE_HEADER_${header_name.upper()}: \
-//::  #endfor
-        return false; \
     \
 
 #endif	/* OVS_ACTION_ODP_EXECUTE_H */

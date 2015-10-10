@@ -50,10 +50,6 @@
 //::
 /* -- Called in lib/ofp-actions.h -- */
 #define OVS_OFPACTS \
-//::  for header_name in ordered_header_instances_regular:
-    OFPACT(ADD_HEADER_${header_name.upper()}, ofpact_null, ofpact, "add_header_${header_name}") \
-    OFPACT(REMOVE_HEADER_${header_name.upper()}, ofpact_null, ofpact, "remove_header_${header_name}") \
-//::  #endfor
     \
 
 /* -- Called in lib/ofp-actions.h -- */
@@ -66,112 +62,26 @@
 
 /* -- Called in lib/ofp-actions.c -- */
 #define OVS_OFP_FUNCS \
-//::  for header_name in ordered_header_instances_regular:
-    static enum ofperr \
-    decode_OFPAT_RAW_ADD_HEADER_${header_name.upper()}(struct ofpbuf *out) \
-    { \
-        ofpact_put_ADD_HEADER_${header_name.upper()}(out); \
-        return 0; \
-    } \
     \
-    static void \
-    encode_ADD_HEADER_${header_name.upper()}(const struct ofpact_null *null OVS_UNUSED, \
-                             enum ofp_version ofp_version, struct ofpbuf *out) \
-    { \
-        if (ofp_version >= OFP15_VERSION) { \
-            put_OFPAT_ADD_HEADER_${header_name.upper()}(out); \
-        } \
-    } \
-    \
-    static char * OVS_WARN_UNUSED_RESULT \
-    parse_ADD_HEADER_${header_name.upper()}(char *arg OVS_UNUSED, struct ofpbuf *ofpacts, \
-                            enum ofputil_protocol *usable_protocols OVS_UNUSED) \
-    { \
-        ofpact_put_ADD_HEADER_${header_name.upper()}(ofpacts); \
-        return NULL; \
-    } \
-    \
-    static void \
-    format_ADD_HEADER_${header_name.upper()}(const struct ofpact_null *a OVS_UNUSED, struct ds *s) \
-    { \
-        ds_put_cstr(s, "add_header_${header_name}"); \
-    } \
-    \
-    static enum ofperr \
-    decode_OFPAT_RAW_REMOVE_HEADER_${header_name.upper()}(struct ofpbuf *out) \
-    { \
-        ofpact_put_REMOVE_HEADER_${header_name.upper()}(out); \
-        return 0; \
-    } \
-    \
-    static void \
-    encode_REMOVE_HEADER_${header_name.upper()}(const struct ofpact_null *null OVS_UNUSED, \
-                         enum ofp_version ofp_version, struct ofpbuf *out) \
-    { \
-        if (ofp_version >= OFP15_VERSION) { \
-            put_OFPAT_REMOVE_HEADER_${header_name.upper()}(out); \
-        } \
-    } \
-    \
-    static char * OVS_WARN_UNUSED_RESULT \
-    parse_REMOVE_HEADER_${header_name.upper()}(char *arg OVS_UNUSED, struct ofpbuf *ofpacts, \
-                        enum ofputil_protocol *usable_protocols OVS_UNUSED) \
-    { \
-        ofpact_put_REMOVE_HEADER_${header_name.upper()}(ofpacts); \
-        return NULL; \
-    } \
-    \
-    static void \
-    format_REMOVE_HEADER_${header_name.upper()}(const struct ofpact_null *a OVS_UNUSED, struct ds *s) \
-    { \
-        ds_put_cstr(s, "remove_header_${header_name}"); \
-    } \
-    \
-//::  #endfor
 
 /* -- Called in lib/ofp-actions.c -- */
 #define OVS_IS_SET_OR_MOVE_ACTION_CASES \
-//::  for header_name in ordered_header_instances_regular:
-    case OFPACT_ADD_HEADER_${header_name.upper()}: \
-    case OFPACT_REMOVE_HEADER_${header_name.upper()}: \
-//::  #endfor
-        return false; \
     \
 
 /* -- Called in lib/ofp-actions.c -- */
 #define OVS_IS_ALLOWED_IN_ACTIONS_SET_CASES \
-//::  for header_name in ordered_header_instances_regular:
-    case OFPACT_ADD_HEADER_${header_name.upper()}: \
-    case OFPACT_REMOVE_HEADER_${header_name.upper()}: \
-//::  #endfor
-        return false; \
     \
 
 /* -- Called in lib/ofp-actions.c -- */
 #define OVS_INSTRUCTION_TYPE_FROM_OFPACT_TYPE_CASES \
-//::  for header_name in ordered_header_instances_regular:
-    case OFPACT_ADD_HEADER_${header_name.upper()}: \
-    case OFPACT_REMOVE_HEADER_${header_name.upper()}: \
-//::  #endfor
-        return OVSINST_OFPIT11_APPLY_ACTIONS; \
     \
 
 /* -- Called in lib/ofp-actions.c -- */
 #define OVS_CHECK___CASES \
-//::  for header_name in ordered_header_instances_regular:
-    case OFPACT_ADD_HEADER_${header_name.upper()}: \
-    case OFPACT_REMOVE_HEADER_${header_name.upper()}: \
-//::  #endfor
-        return 0; \
     \
 
 /* -- Called in lib/ofp-actions.c -- */
 #define OVS_OUTPUTS_TO_PORT_CASES \
-//::  for header_name in ordered_header_instances_regular:
-    case OFPACT_ADD_HEADER_${header_name.upper()}: \
-    case OFPACT_REMOVE_HEADER_${header_name.upper()}: \
-//::  #endfor
-        return false; \
     \
 
 #endif	/* OVS_ACTION_OFP_ACTIONS_H */

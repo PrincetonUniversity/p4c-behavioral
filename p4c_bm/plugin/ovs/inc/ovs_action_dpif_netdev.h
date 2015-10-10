@@ -50,11 +50,6 @@
 //::
 /* -- Called in lib/dpif-netdev.c -- */
 #define OVS_EXECUTE_CB_CASES \
-//::  for header_name in ordered_header_instances_regular:
-    case OVS_ACTION_ATTR_ADD_HEADER_${header_name.upper()}: \
-    case OVS_ACTION_ATTR_REMOVE_HEADER_${header_name.upper()}: \
-//::  #endfor
-        OVS_NOT_REACHED(); \
     \
 
 #endif	/* OVS_ACTION_DPIF_NETDEV_H */

@@ -48,16 +48,9 @@
 //::    #endfor
 //::  #endfor
 //::
-//::  base_ofpat_offset = 33
+//::  base_ofpat_offset = 30
 //::  for header_name in ordered_header_instances_regular:
-    /* OF1.5+(${base_ofpat_offset}): void. */
-    OFPAT_RAW_ADD_HEADER_${header_name.upper()},
-//::  base_ofpat_offset += 1
-
-    /* OF1.5+(${base_ofpat_offset}): void. */
-    OFPAT_RAW_REMOVE_HEADER_${header_name.upper()},
-//::  base_ofpat_offset += 1
-
+//::    pass
 //::  #endfor
 /* Do NOT REMOVE THIS. */
 //}

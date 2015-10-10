@@ -50,67 +50,50 @@
 //::
 /* -- Called in lib/packets.h -- */
 #define OVS_FUNC_DECLS \
-//::  for header_name in ordered_header_instances_regular:
-    void add_header_${header_name}(struct dp_packet *packet); \
-    void remove_header_${header_name}(struct dp_packet *packet); \
-//::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
-//::      pass
-//::    #endfor
-//::  #endfor
     \
 
 /* -- Called in lib/packets.c -- */
 #define OVS_FUNC_DEFS \
-//::  for header_name in ordered_header_instances_regular:
-    void add_header_${header_name}(struct dp_packet *packet) \
-    { \
-        packet->${header_name}_valid = true; \
-    } \
     \
-    void remove_header_${header_name}(struct dp_packet *packet) \
-    { \
+
+/* -- Called in lib/packets.c -- */
+#define OVS_ADD_HEADER_CASES \
+//::  for header_name in ordered_header_instances_regular:
+    case OVS_KEY_ATTR_${header_name.upper()}: \
+        packet->${header_name}_valid = true; \
+        break; \
+    \
+//::  #endfor
+
+/* -- Called in lib/packets.c -- */
+#define OVS_REMOVE_HEADER_CASES \
+//::  for header_name in ordered_header_instances_regular:
+    case OVS_KEY_ATTR_${header_name.upper()}: \
         packet->${header_name}_valid = false; \
         packet->${header_name}_ofs = UINT16_MAX; \
-    } \
+        break; \
     \
-//::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
-//::      pass
-//::    #endfor
 //::  #endfor
-    void deparse(struct dp_packet *packet) \
-    { \
-        char *data = dp_packet_data(packet); \
-        \
-        /* get new payload offset */ \
-        uint16_t new_payload_ofs = 0; \
+
+/* -- Called in lib/packets.c -- */
+#define OVS_DEPARSE_NEW_PAYLOAD_OFS \
 //::  for header_name in ordered_header_instances_regular:
-        if (packet->${header_name}_valid) { \
-            new_payload_ofs += sizeof(struct ${header_name}_header); \
-        } \
-//::  #endfor
-        \
-        /* shift payload */ \
-        if (packet->payload_ofs != new_payload_ofs) { \
-            if (dp_packet_get_allocated(packet) >= (new_payload_ofs + (dp_packet_size(packet) - packet->payload_ofs))) { \
-                memmove(data + new_payload_ofs, data + packet->payload_ofs, dp_packet_size(packet) - packet->payload_ofs); \
-            } \
-            else { /* error */ } \
-            \
-            dp_packet_set_size(packet, dp_packet_size(packet) + (new_payload_ofs - packet->payload_ofs)); \
-            packet->payload_ofs = new_payload_ofs; \
-        } \
-        \
-        /* write headers */ \
-        uint16_t run_ofs = 0; \
-//::  for header_name in ordered_header_instances_regular:
-        if (packet->${header_name}_valid) { \
-            memcpy(data + run_ofs, &packet->${header_name}, sizeof(struct ${header_name}_header)); \
-            packet->${header_name}_ofs = run_ofs; \
-            \
-            run_ofs += sizeof(struct ${header_name}_header); \
-        } \
-//::  #endfor
+    if (packet->${header_name}_valid) { \
+        new_payload_ofs += sizeof(struct ${header_name}_header); \
     } \
+//::  #endfor
+    \
+
+/* -- Called in lib/packets.c -- */
+#define OVS_DEPARSE_WRITE_HEADERS \
+//::  for header_name in ordered_header_instances_regular:
+    if (packet->${header_name}_valid) { \
+        memcpy(data + run_ofs, &packet->${header_name}, sizeof(struct ${header_name}_header)); \
+        packet->${header_name}_ofs = run_ofs; \
+        \
+        run_ofs += sizeof(struct ${header_name}_header); \
+    } \
+//::  #endfor
     \
 
 #endif	/* OVS_ACTION_PACKETS_H */

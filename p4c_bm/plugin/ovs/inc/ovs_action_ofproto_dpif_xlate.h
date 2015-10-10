@@ -54,48 +54,40 @@
 
 /* -- Called in ofproto/ofproto-dpif-xlate.c -- */
 #define OVS_RECIRC_UNROLL_ACTIONS_CASES \
-//::  for header_name in ordered_header_instances_regular:
-    case OFPACT_ADD_HEADER_${header_name.upper()}: \
-    case OFPACT_REMOVE_HEADER_${header_name.upper()}: \
-        break; \
     \
-//::  #endfor
 
 /* -- Called in ofproto/ofproto-dpif-xlate.c -- */
 #define OVS_COMPOSE_AND_XLATE_FUNCS \
-//::  for header_name in ordered_header_instances_regular:
-    static void \
-    compose_add_header_${header_name}(struct xlate_ctx *ctx) \
-    { \
-        bool use_masked = ctx->xbridge->support.masked_set_action; \
-        ctx->xout->slow |= commit_odp_actions(&ctx->xin->flow, &ctx->base_flow, \
-                                          ctx->odp_actions, ctx->wc, \
-                                          use_masked); \
-        nl_msg_put_flag(ctx->odp_actions, OVS_ACTION_ATTR_ADD_HEADER_${header_name.upper()}); \
-    } \
     \
-    static void \
-    compose_remove_header_${header_name}(struct xlate_ctx *ctx) \
-    { \
-        bool use_masked = ctx->xbridge->support.masked_set_action; \
-        ctx->xout->slow |= commit_odp_actions(&ctx->xin->flow, &ctx->base_flow, \
-                                          ctx->odp_actions, ctx->wc, \
-                                          use_masked); \
-        nl_msg_put_flag(ctx->odp_actions, OVS_ACTION_ATTR_REMOVE_HEADER_${header_name.upper()}); \
+
+/* -- Called in ofproto/ofproto-dpif-xlate.c -- */
+#define OVS_DO_XLATE_ACTIONS_CASES \
+    \
+
+/* -- Called in ofproto/ofproto-dpif-xlate.c -- */
+#define OVS_COMPOSE_ADD_HEADER_CHECKS \
+//::  for header_name in ordered_header_instances_regular:
+    if (!memcmp("${header_name}", add_header->name, add_header->n_bytes)) { \
+        size_t offset = nl_msg_start_nested(ctx->odp_actions, \
+                                            OVS_ACTION_ATTR_ADD_HEADER); \
+        nl_msg_put_flag(ctx->odp_actions, OVS_KEY_ATTR_${header_name.upper()}); \
+        nl_msg_end_nested(ctx->odp_actions, offset); \
+        return; \
     } \
     \
 //::  #endfor
 
 /* -- Called in ofproto/ofproto-dpif-xlate.c -- */
-#define OVS_DO_XLATE_ACTIONS_CASES \
+#define OVS_COMPOSE_REMOVE_HEADER_CHECKS \
 //::  for header_name in ordered_header_instances_regular:
-    case OFPACT_ADD_HEADER_${header_name.upper()}: \
-        compose_add_header_${header_name}(ctx); \
-        break; \
-    case OFPACT_REMOVE_HEADER_${header_name.upper()}: \
-        compose_remove_header_${header_name}(ctx); \
-        break; \
-//::  #endfor
+    if (!memcmp("${header_name}", remove_header->name, remove_header->n_bytes)) { \
+        size_t offset = nl_msg_start_nested(ctx->odp_actions, \
+                                            OVS_ACTION_ATTR_REMOVE_HEADER); \
+        nl_msg_put_flag(ctx->odp_actions, OVS_KEY_ATTR_${header_name.upper()}); \
+        nl_msg_end_nested(ctx->odp_actions, offset); \
+        return; \
+    } \
     \
+//::  #endfor
 
 #endif	/* OVS_ACTION_OFPROTO_DPIF_XLATE_H */

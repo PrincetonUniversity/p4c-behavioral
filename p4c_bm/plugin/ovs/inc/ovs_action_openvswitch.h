@@ -50,10 +50,6 @@
 //::
 /* -- Called in datapath/linux/compat/include/linux/openvswitch.h -- */
 #define OVS_ACTION_ATTRS \
-//::  for header_name in ordered_header_instances_regular:
-    OVS_ACTION_ATTR_ADD_HEADER_${header_name.upper()}, \
-    OVS_ACTION_ATTR_REMOVE_HEADER_${header_name.upper()}, \
-//::  #endfor
     \
 
 /* -- Called in datapath/linux/compat/include/linux/openvswitch.h -- */
