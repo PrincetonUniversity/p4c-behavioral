@@ -90,4 +90,27 @@
     \
 //::  #endfor
 
+/* -- Called in ofproto/ofproto-dpif-xlate.c -- */
+#define OVS_COMPOSE_ADD_TO_FIELD_CASES \
+//::  for header_name in ordered_header_instances_regular:
+//::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
+    case MFF_${field_name.upper()}: \
+//::      if bit_width == 8:
+        compose_add_to_field_(ctx, OVS_KEY_ATTR_${field_name.upper()}, &value->u8, sizeof value->u8); \
+//::      elif bit_width == 16:
+        compose_add_to_field_(ctx, OVS_KEY_ATTR_${field_name.upper()}, &value->be16, sizeof value->be16); \
+//::      elif bit_width == 32:
+        compose_add_to_field_(ctx, OVS_KEY_ATTR_${field_name.upper()}, &value->be32, sizeof value->be32); \
+//::      elif bit_width == 64:
+        compose_add_to_field_(ctx, OVS_KEY_ATTR_${field_name.upper()}, &value->be64, sizeof value->be64); \
+//::      else:
+//::        pass  # TODO: handle this case.
+//::      #endif
+//::    #endfor
+        break; \
+    \
+//::  #endfor
+
+
+
 #endif	/* OVS_ACTION_OFPROTO_DPIF_XLATE_H */

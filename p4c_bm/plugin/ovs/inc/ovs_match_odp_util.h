@@ -52,6 +52,9 @@
 #define OVS_KEY_ATTRS_TO_STRING_CASES \
 //::  for header_name in ordered_header_instances_regular:
     case OVS_KEY_ATTR_${header_name.upper()}: return "${header_name}"; \
+//::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
+    case OVS_KEY_ATTR_${field_name.upper()}: return "${header_name}"; \
+//::    #endfor
 //::  #endfor
     \
 
@@ -80,6 +83,27 @@
         ds_chomp(ds, ','); \
         break; \
     } \
+//::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
+    case OVS_KEY_ATTR_${field_name.upper()}: { \
+//::      if bit_width == 8:
+        const uint8_t *key = nl_attr_get(a); \
+        format_u8x(ds, "${field_name}", *key, NULL, verbose); \
+//::      elif bit_width == 16:
+        const ovs_be16 *key = nl_attr_get(a); \
+        format_be16(ds, "${field_name}", *key, NULL, verbose); \
+//::      elif bit_width == 32:
+        const ovs_be32 *key = nl_attr_get(a); \
+        format_be32(ds, "${field_name}", *key, NULL, verbose); \
+//::      elif bit_width == 64:
+        const ovs_be64 *key = nl_attr_get(a); \
+        format_be64(ds, "${field_name}", *key, NULL, verbose); \
+//::      else:
+//::        pass  # TODO: implement this case.
+//::      #endif
+        ds_chomp(ds, ','); \
+        break; \
+    } \
+//::    #endfor
 //::  #endfor
     \
 
@@ -149,6 +173,9 @@
 #define OVS_FLOW_KEY_ATTR_LENS \
 //::  for header_name in ordered_header_instances_regular:
     [OVS_KEY_ATTR_${header_name.upper()}] = { .len = sizeof(struct ovs_key_${header_name}) }, \
+//::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
+    [OVS_KEY_ATTR_${field_name.upper()}] = { .len = 2 }, \
+//::    #endfor
 //::  #endfor
     \
 

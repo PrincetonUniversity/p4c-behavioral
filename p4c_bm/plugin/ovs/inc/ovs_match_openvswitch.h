@@ -52,6 +52,9 @@
 #define OVS_KEY_ATTRS \
 //::  for header_name in ordered_header_instances_regular:
     OVS_KEY_ATTR_${header_name.upper()}, \
+//::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
+    OVS_KEY_ATTR_${field_name.upper()}, \
+//::    #endfor
 //::  #endfor
     \
 
