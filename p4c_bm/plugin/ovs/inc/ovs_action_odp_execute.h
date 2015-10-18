@@ -79,8 +79,8 @@
                 ntohl(packet->${header_name}.${field_name}) + ntohl(*value)); \
 //::      elif bit_width == 64:
         const ovs_be64 *value = nl_attr_get(a); \
-        packet->${header_name}.${field_name} = u64_to_be64( \
-                be64_to_u64(packet->${header_name}.${field_name}) + be64_to_u64(*value)); \
+        packet->${header_name}.${field_name} = htonll( \
+                ntohll(packet->${header_name}.${field_name}) + ntohll(*value)); \
 //::      else:
 //::        pass  # TODO: handle this case.
 //::      #endif
@@ -109,8 +109,8 @@
                 ntohl(packet->${header_name}.${field_name}) - ntohl(*value)); \
 //::      elif bit_width == 64:
         const ovs_be64 *value = nl_attr_get(a); \
-        packet->${header_name}.${field_name} = u64_to_be64( \
-                be64_to_u64(packet->${header_name}.${field_name}) - be64_to_u64(*value)); \
+        packet->${header_name}.${field_name} = htonll( \
+                ntohll(packet->${header_name}.${field_name}) - ntohll(*value)); \
 //::      else:
 //::        pass  # TODO: handle this case.
 //::      #endif

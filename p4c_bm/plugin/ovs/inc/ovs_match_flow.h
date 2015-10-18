@@ -110,15 +110,15 @@
 //::                  #endif
 //::                elif bit_width == 64:
 //::                  if mask:
-        ((be64_to_u64(packet->${header_name}.${field_name}) & ${hex(mask)}) >> ${bit_offset_hdr}) == ${hex(byte_array_to_int(value))} \
+        ((nothll(packet->${header_name}.${field_name}) & ${hex(mask)}) >> ${bit_offset_hdr}) == ${hex(byte_array_to_int(value))} \
 //::                  else:
-        be64_to_u64(packet->${header_name}.${field_name}) == ${hex(byte_array_to_int(value))} \
+        ntohll(packet->${header_name}.${field_name}) == ${hex(byte_array_to_int(value))} \
 //::                  #endif
 //::                elif bit_width <= 64:
 //::                  if mask:
-        (u${bit_width}_to_u64((const uint8_t *) &packet->${header_name}.${field_name}) & ${hex(mask)}) >> ${bit_offset_hdr} == ${hex(byte_array_to_int(value))} \
+        (be${bit_width}_to_u64((const uint8_t *) &packet->${header_name}.${field_name}) & ${hex(mask)}) >> ${bit_offset_hdr} == ${hex(byte_array_to_int(value))} \
 //::                  else:
-        u${bit_width}_to_u64((const uint8_t *) &packet->${header_name}.${field_name}) == ${hex(byte_array_to_int(value))} \
+        be${bit_width}_to_u64((const uint8_t *) &packet->${header_name}.${field_name}) == ${hex(byte_array_to_int(value))} \
 //::                  #endif
 //::                  # TODO: right now only covers up to 64 bits, look into how to extend this range.
 //::                else:
