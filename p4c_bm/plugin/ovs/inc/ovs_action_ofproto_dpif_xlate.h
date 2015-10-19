@@ -133,7 +133,7 @@
     \
 
 /* -- Called in ofproto/ofproto-dpif-xlate.c -- */
-#define OVS_COMPOSE_CALC_FIELDS_VERIFY_CASES \
+#define OVS_COMPOSE_CALC_FIELDS_CASES \
 //::  for header_name in ordered_header_instances_regular:
 //::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
     case MFF_${field_name.upper()}: \

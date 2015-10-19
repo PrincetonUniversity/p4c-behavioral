@@ -174,7 +174,7 @@
 //::  for header_name in ordered_header_instances_regular:
     [OVS_KEY_ATTR_${header_name.upper()}] = { .len = sizeof(struct ovs_key_${header_name}) }, \
 //::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
-    [OVS_KEY_ATTR_${field_name.upper()}] = { .len = 2 }, \
+    [OVS_KEY_ATTR_${field_name.upper()}] = { .len = ATTR_LEN_VARIABLE }, \
 //::    #endfor
 //::  #endfor
     \
