@@ -1,6 +1,3 @@
-
-/* Headers */
-
 header_type ethernet_t {
     fields {
         dstAddr : 48;
@@ -18,23 +15,17 @@ header_type intrinsic_metadata_t {
     }
 }
 
-
-header ethernet_t ethernet_;
-metadata intrinsic_metadata_t intrinsic_metadata;
-
-/* Parser */
-
 parser start {
     return parse_ethernet;
 }
 
+header ethernet_t ethernet_;
+metadata intrinsic_metadata_t intrinsic_metadata;
+
 parser parse_ethernet {
     extract(ethernet_);
-
     return ingress;
 }
-
-/* Actions */
 
 action _drop() {
     drop();
@@ -54,22 +45,20 @@ action mac_learn() {
     generate_digest(MAC_LEARN_RECEIVER, mac_learn_digest);
 }
 
-action forward(port) {
-    modify_field(standard_metadata.egress_spec, port);
-}
-
-action broadcast() {
-    modify_field(intrinsic_metadata.mcast_grp, 1);
-}
-
-/* Match-Action Tables */
-
 table smac {
     reads {
         ethernet_.srcAddr : exact;
     }
     actions {mac_learn; _nop;}
     size : 512;
+}
+
+action forward(port) {
+    modify_field(standard_metadata.egress_spec, port);
+}
+
+action broadcast() {
+    modify_field(intrinsic_metadata.mcast_grp, 1);
 }
 
 table dmac {
@@ -87,9 +76,6 @@ table mcast_src_pruning {
     actions {_nop; _drop;}
     size : 1;
 }
-
-
-/* Control-Flow */
 
 control ingress {
     apply(smac);
