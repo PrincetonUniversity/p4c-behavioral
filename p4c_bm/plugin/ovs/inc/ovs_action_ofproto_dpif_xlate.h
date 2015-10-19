@@ -106,10 +106,10 @@
 //::      else:
 //::        pass  # TODO: handle this case.
 //::      #endif
-//::    #endfor
         break; \
-    \
+//::    #endfor
 //::  #endfor
+    \
 
 /* -- Called in ofproto/ofproto-dpif-xlate.c -- */
 #define OVS_COMPOSE_SUB_FROM_FIELD_CASES \
@@ -127,9 +127,20 @@
 //::      else:
 //::        pass  # TODO: handle this case.
 //::      #endif
-//::    #endfor
         break; \
-    \
+//::    #endfor
 //::  #endfor
+    \
+
+/* -- Called in ofproto/ofproto-dpif-xlate.c -- */
+#define OVS_COMPOSE_CALC_FIELDS_VERIFY_CASES \
+//::  for header_name in ordered_header_instances_regular:
+//::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
+    case MFF_${field_name.upper()}: \
+        nl_msg_put_flag(ctx->odp_actions, OVS_KEY_ATTR_${field_name.upper()}); \
+        break; \
+//::    #endfor
+//::  #endfor
+    \
 
 #endif	/* OVS_ACTION_OFPROTO_DPIF_XLATE_H */
