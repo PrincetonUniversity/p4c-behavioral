@@ -73,7 +73,7 @@
                        (uint8_t *) &${field_name}, sizeof(struct ${field_name}_t)); \
 //::      #endif
 //::    #endfor
-//::    # TODO: the mask check, below, is unnecessary.
+//::    # TODO: this masking check is unnecessary.
         uint8_t ${header_name}_valid = key->${header_name}_valid | (packet->${header_name}_valid & ~mask->${header_name}_valid); \
         \
         packet_set_${header_name}( \

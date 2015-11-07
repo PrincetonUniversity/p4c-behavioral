@@ -81,6 +81,7 @@
                    sizeof(struct ${field_name}_t), verbose); \
 //::      #endif
 //::    #endfor
+        format_u8x(ds, "${header_name}_valid", key->${header_name}_valid, NULL, verbose); \
         ds_chomp(ds, ','); \
         break; \
     } \
@@ -112,6 +113,7 @@
         format_u8x(ds, "${header_name}_valid", *key, NULL, verbose); \
         ds_chomp(ds, ','); \
         break; \
+    } \
 //::  #endfor
     \
 

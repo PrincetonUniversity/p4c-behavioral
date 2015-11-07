@@ -51,6 +51,9 @@
 /* -- Called in lib/meta-flow.c -- */
 #define OVS_GET_VALUE_CASES \
 //::  for header_name in ordered_header_instances_non_virtual:
+//::    if header_name == "standard_metadata":
+//::      continue
+//::    #endif
 //::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
     case MFF_${field_name.upper()}: \
 //::      if bit_width == 8:
@@ -78,6 +81,9 @@
 /* -- Called in lib/meta-flow.c -- */
 #define OVS_IS_VALUE_VALID_CASES \
 //::  for header_name in ordered_header_instances_non_virtual:
+//::    if header_name == "standard_metadata":
+//::      continue
+//::    #endif
 //::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
     case MFF_${field_name.upper()}: \
         return true; \
@@ -92,6 +98,9 @@
 /* -- Called in lib/meta-flow.c -- */
 #define OVS_IS_ALL_WILD_CASES \
 //::  for header_name in ordered_header_instances_non_virtual:
+//::    if header_name == "standard_metadata":
+//::      continue
+//::    #endif
 //::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
     case MFF_${field_name.upper()}: \
 //::      if bit_width == 8 or bit_width == 16 or bit_width == 32 or bit_width == 64:
@@ -111,6 +120,9 @@
 /* -- Called in lib/meta-flow.c -- */
 #define OVS_SET_FLOW_VALUE_CASES \
 //::  for header_name in ordered_header_instances_non_virtual:
+//::    if header_name == "standard_metadata":
+//::      continue
+//::    #endif
 //::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
     case MFF_${field_name.upper()}: \
 //::      if bit_width == 8:
@@ -138,6 +150,9 @@
 /* -- Called in lib/meta-flow.c -- */
 #define OVS_SET_VLAUE_CASES \
 //::  for header_name in ordered_header_instances_non_virtual:
+//::    if header_name == "standard_metadata":
+//::      continue
+//::    #endif
 //::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
     case MFF_${field_name.upper()}: \
 //::      if bit_width == 8:
@@ -172,6 +187,9 @@
 /* -- Called in lib/meta-flow.c -- */
 #define OVS_SET_WILD_CASES \
 //::  for header_name in ordered_header_instances_non_virtual:
+//::    if header_name == "standard_metadata":
+//::      continue
+//::    #endif
 //::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
     case MFF_${field_name.upper()}: \
 //::      if bit_width == 8 or bit_width == 16 or bit_width == 32 or bit_width == 64:
@@ -197,6 +215,9 @@
 /* -- Called in lib/meta-flow.c -- */
 #define OVS_SET_CASES \
 //::  for header_name in ordered_header_instances_non_virtual:
+//::    if header_name == "standard_metadata":
+//::      continue
+//::    #endif
 //::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
     case MFF_${field_name.upper()}: \
 //::      if bit_width == 8:

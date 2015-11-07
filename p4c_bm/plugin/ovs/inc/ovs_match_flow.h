@@ -60,7 +60,7 @@
 //::  for state, parse_info in parse_states.items():
 #define OVS_MINIFLOW__${state.upper()} \
 //::    if OVS_PARSER_IMP == 0:
-//::      # TODO: implement parser implementation style 0.
+//::      # TODO: implement parser implementation style 0 (i.e., non concatenated field parsing).
     OVS_MINIFLOW_OUT \
 //::    elif OVS_PARSER_IMP == 1:
 //::
@@ -76,7 +76,7 @@
         sizeof(struct ${header_name}_header)); \
 //::          # NOTE: this valid is used by the slow-path
     ${header_name}->${header_name}_valid = 1; \
-//::          # TODO: offset increase should be based on header length expression, implement this.
+//::          # TODO: offset increase should be based on header length expression, need to implement this.
     miniflow_push_words(mf, ${header_name}, ${header_name}, \
         sizeof(struct ${header_name}_padded_header) / sizeof(uint64_t)); \
     packet->${header_name} = *(struct ${header_name}_header *) ${header_name}; \
@@ -331,7 +331,7 @@
 //::   #endif
     if (is_${header_name}_touched) \
     { \
-        miniflow_push_words(mf, ${header_name}, ${header_name}, \
+        miniflow_push_words(mf, ${header_name}, &${header_name}, \
             sizeof(struct ${header_name}_padded_header) / sizeof(uint64_t)); \
     } \
 //:: #endfor
