@@ -24,10 +24,10 @@
 
 //::  import math
 //::
-//::  ordered_field_instances_all__name_width = []
-//::  ordered_header_instances_all_field__name_width = {}
-//::  for header_name in ordered_header_instances_all:
-//::    ordered_header_instances_all_field__name_width[header_name] = []
+//::  ordered_field_instances_non_virtual__name_width = []
+//::  ordered_header_instances_non_virtual_field__name_width = {}
+//::  for header_name in ordered_header_instances_non_virtual:
+//::    ordered_header_instances_non_virtual_field__name_width[header_name] = []
 //::    proc_fields = []
 //::    for field_name in header_info[header_name]["fields"]:
 //::      if OVS_PARSER_IMP == 0:
@@ -43,8 +43,8 @@
 //::      else:
 //::        assert(False)
 //::      #endif
-//::      ordered_field_instances_all__name_width += [(field_name, bit_width)]
-//::      ordered_header_instances_all_field__name_width[header_name] += [(field_name, bit_width)]
+//::      ordered_field_instances_non_virtual__name_width += [(field_name, bit_width)]
+//::      ordered_header_instances_non_virtual_field__name_width[header_name] += [(field_name, bit_width)]
 //::    #endfor
 //::  #endfor
 //::
@@ -57,31 +57,28 @@
     { \
         struct ${header_name}_header *${header_name} = &packet->${header_name}; \
         \
-//::    # TODO: this condition should be indicated back to the user, look into this.
-        if (${header_name}) { \
-//::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
+//::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
 //::      if bit_width == 8:
-            uint8_t ${field_name} = key->${field_name} | (${header_name}->${field_name} & ~mask->${field_name}); \
+        uint8_t ${field_name} = key->${field_name} | (${header_name}->${field_name} & ~mask->${field_name}); \
 //::      elif bit_width == 16:
-            ovs_be16 ${field_name} = key->${field_name} | (${header_name}->${field_name} & ~mask->${field_name}); \
+        ovs_be16 ${field_name} = key->${field_name} | (${header_name}->${field_name} & ~mask->${field_name}); \
 //::      elif bit_width == 32:
-            ovs_be32 ${field_name} = key->${field_name} | (${header_name}->${field_name} & ~mask->${field_name}); \
+        ovs_be32 ${field_name} = key->${field_name} | (${header_name}->${field_name} & ~mask->${field_name}); \
 //::      elif bit_width == 64:
-            ovs_be64 ${field_name} = key->${field_name} | (${header_name}->${field_name} & ~mask->${field_name}); \
+        ovs_be64 ${field_name} = key->${field_name} | (${header_name}->${field_name} & ~mask->${field_name}); \
 //::      else:
-            struct ${field_name}_t ${field_name}; \
-            ovs_apply_mask((const uint8_t *) &key->${field_name}, (const uint8_t *) &${header_name}->${field_name}, \
-                           (const uint8_t *) &mask->${field_name}, \
-                           (uint8_t *) &${field_name}, sizeof(struct ${field_name}_t)); \
+        struct ${field_name}_t ${field_name}; \
+        ovs_apply_mask((const uint8_t *) &key->${field_name}, (const uint8_t *) &${header_name}->${field_name}, \
+                       (const uint8_t *) &mask->${field_name}, \
+                       (uint8_t *) &${field_name}, sizeof(struct ${field_name}_t)); \
 //::      #endif
 //::    #endfor
             \
-            packet_set_${header_name}( \
-//::    for field_name, _ in ordered_header_instances_all_field__name_width[header_name]:
-                ${field_name}, \
+        packet_set_${header_name}( \
+//::    for field_name, _ in ordered_header_instances_non_virtual_field__name_width[header_name]:
+            ${field_name}, \
 //::    #endfor
-                packet); \
-        } \
+            packet); \
     } \
     \
 //::  #endfor
@@ -94,7 +91,7 @@
             const struct ovs_key_${header_name} *${header_name}_key = \
                   nl_attr_get_unspec(a, sizeof(struct ovs_key_${header_name})); \
             packet_set_${header_name}( \
-//::    for field_name, _ in ordered_header_instances_all_field__name_width[header_name]:
+//::    for field_name, _ in ordered_header_instances_non_virtual_field__name_width[header_name]:
                 ${header_name}_key->${field_name}, \
 //::    #endfor
                 packet); \

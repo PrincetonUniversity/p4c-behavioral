@@ -24,10 +24,10 @@
 
 //::  import math
 //::
-//::  ordered_field_instances_all__name_width = []
-//::  ordered_header_instances_all_field__name_width = {}
-//::  for header_name in ordered_header_instances_all:
-//::    ordered_header_instances_all_field__name_width[header_name] = []
+//::  ordered_field_instances_non_virtual__name_width = []
+//::  ordered_header_instances_non_virtual_field__name_width = {}
+//::  for header_name in ordered_header_instances_non_virtual:
+//::    ordered_header_instances_non_virtual_field__name_width[header_name] = []
 //::    proc_fields = []
 //::    for field_name in header_info[header_name]["fields"]:
 //::      if OVS_PARSER_IMP == 0:
@@ -43,24 +43,31 @@
 //::      else:
 //::        assert(False)
 //::      #endif
-//::      ordered_field_instances_all__name_width += [(field_name, bit_width)]
-//::      ordered_header_instances_all_field__name_width[header_name] += [(field_name, bit_width)]
+//::      ordered_field_instances_non_virtual__name_width += [(field_name, bit_width)]
+//::      ordered_header_instances_non_virtual_field__name_width[header_name] += [(field_name, bit_width)]
 //::    #endfor
 //::  #endfor
 //::
 /* -- Called in lib/packets.h -- */
-//::  for header_name in ordered_header_instances_all:
-//::    header_len = sum([bit_width for _, bit_width in ordered_header_instances_all_field__name_width[header_name]])/8
+//::  for header_name in ordered_header_instances_non_virtual:
+//::    if header_name == "standard_metadata":
+//::      pass
+//::    else:
+//::      header_len = sum([bit_width for _, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]])/8
 #define ${header_name.upper()}_HEADER_LEN ${header_len}
+//::    #endif
 //::  #endfor
 
 /* -- Called in lib/packets.h -- */
 #define OVS_HDR_STRUCTS \
-//::  for header_name in ordered_header_instances_all:
+//::  for header_name in ordered_header_instances_non_virtual:
+//::    if header_name == "standard_metadata":
+//::      continue
+//::    #endif
 //::    run_bit_width = 0
     OVS_PACKED( \
     struct ${header_name}_header { \
-//::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
+//::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
 //::      if bit_width == 8:
         uint8_t ${field_name}; \
 //::      elif bit_width == 16:
@@ -80,6 +87,12 @@
     OVS_PACKED( \
     struct ${header_name}_padded_header { \
         struct ${header_name}_header hdr; \
+//::    valid_byte = 0
+//::    if header_name in ordered_header_instances_regular:
+        uint8_t ${header_name}_valid; \
+//::      run_bit_width += 8
+//::      valid_byte = 1
+//::    #endif
 //::    pad_bits = 64 - (run_bit_width % 64)
 //::    pad_bytes = 0
 //::    if pad_bits < 64:
@@ -88,7 +101,7 @@
 //::    #endif
     }); \
     BUILD_ASSERT_DECL( \
-        ${header_name.upper()}_HEADER_LEN+${pad_bytes} == sizeof(struct ${header_name}_padded_header)); \
+        ${header_name.upper()}_HEADER_LEN+${valid_byte}+${pad_bytes} == sizeof(struct ${header_name}_padded_header)); \
     \
 //::  #endfor
 
@@ -96,7 +109,7 @@
 #define OVS_HDR_DECLS \
 //::  for header_name in ordered_header_instances_regular:
     void packet_set_${header_name}( \
-//::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
+//::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
 //::      if bit_width == 8:
         uint8_t ${field_name}, \
 //::      elif bit_width == 16:
@@ -117,7 +130,7 @@
 #define OVS_HDR_DEFS \
 //::  for header_name in ordered_header_instances_regular:
     void packet_set_${header_name}( \
-//::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
+//::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
 //::      if bit_width == 8:
         uint8_t ${field_name}, \
 //::      elif bit_width == 16:
@@ -134,12 +147,9 @@
     { \
         struct ${header_name}_header *${header_name} = &packet->${header_name}; \
         \
-//::    # TODO: this condition should be indicated back to the user, look into this.
-        if (${header_name}) { \
-//::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
-            ${header_name}->${field_name} = ${field_name}; \
+//::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
+        ${header_name}->${field_name} = ${field_name}; \
 //::    #endfor
-        } \
     } \
     \
 //:: #endfor

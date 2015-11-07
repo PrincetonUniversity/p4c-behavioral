@@ -24,10 +24,10 @@
 
 //::  import math
 //::
-//::  ordered_field_instances_all__name_width = []
-//::  ordered_header_instances_all_field__name_width = {}
-//::  for header_name in ordered_header_instances_all:
-//::    ordered_header_instances_all_field__name_width[header_name] = []
+//::  ordered_field_instances_non_virtual__name_width = []
+//::  ordered_header_instances_non_virtual_field__name_width = {}
+//::  for header_name in ordered_header_instances_non_virtual:
+//::    ordered_header_instances_non_virtual_field__name_width[header_name] = []
 //::    proc_fields = []
 //::    for field_name in header_info[header_name]["fields"]:
 //::      if OVS_PARSER_IMP == 0:
@@ -43,15 +43,18 @@
 //::      else:
 //::        assert(False)
 //::      #endif
-//::      ordered_field_instances_all__name_width += [(field_name, bit_width)]
-//::      ordered_header_instances_all_field__name_width[header_name] += [(field_name, bit_width)]
+//::      ordered_field_instances_non_virtual__name_width += [(field_name, bit_width)]
+//::      ordered_header_instances_non_virtual_field__name_width[header_name] += [(field_name, bit_width)]
 //::    #endfor
 //::  #endfor
 //::
 /* -- Called in lib/nx-match.c -- */
 #define OVS_MATCH_PUT_RAW \
-//::  for header_name in ordered_header_instances_all:
-//::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
+//::  for header_name in ordered_header_instances_non_virtual:
+//::    if header_name == "standard_metadata":
+//::      continue
+//::    #endif
+//::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
 //::      if bit_width == 8:
     nxm_put_8m(b, MFF_${field_name.upper()}, oxm, \
                flow->${header_name}.hdr.${field_name}, \
@@ -75,7 +78,7 @@
             sizeof flow->${header_name}.hdr.${field_name}); \
 //::      #endif
 //::    #endfor
-//::  #endfor
     \
+//::  #endfor
 
 #endif	/* OVS_MATCH_NX_MATCH_H */

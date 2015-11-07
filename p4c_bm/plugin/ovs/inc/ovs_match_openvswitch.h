@@ -24,10 +24,10 @@
 
 //::  import math
 //::
-//::  ordered_field_instances_all__name_width = []
-//::  ordered_header_instances_all_field__name_width = {}
-//::  for header_name in ordered_header_instances_all:
-//::    ordered_header_instances_all_field__name_width[header_name] = []
+//::  ordered_field_instances_non_virtual__name_width = []
+//::  ordered_header_instances_non_virtual_field__name_width = {}
+//::  for header_name in ordered_header_instances_non_virtual:
+//::    ordered_header_instances_non_virtual_field__name_width[header_name] = []
 //::    proc_fields = []
 //::    for field_name in header_info[header_name]["fields"]:
 //::      if OVS_PARSER_IMP == 0:
@@ -43,8 +43,8 @@
 //::      else:
 //::        assert(False)
 //::      #endif
-//::      ordered_field_instances_all__name_width += [(field_name, bit_width)]
-//::      ordered_header_instances_all_field__name_width[header_name] += [(field_name, bit_width)]
+//::      ordered_field_instances_non_virtual__name_width += [(field_name, bit_width)]
+//::      ordered_header_instances_non_virtual_field__name_width[header_name] += [(field_name, bit_width)]
 //::    #endfor
 //::  #endfor
 //::
@@ -52,7 +52,7 @@
 #define OVS_KEY_ATTRS \
 //::  for header_name in ordered_header_instances_regular:
     OVS_KEY_ATTR_${header_name.upper()}, \
-//::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
+//::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
     OVS_KEY_ATTR_${field_name.upper()}, \
 //::    #endfor
 //::  #endfor
@@ -62,7 +62,7 @@
 #define OVS_KEY_STRUCTS \
 //::  for header_name in ordered_header_instances_regular:
     struct ovs_key_${header_name} { \
-//::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
+//::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
 //::      if bit_width == 8:
         uint8_t ${field_name}; \
 //::      elif bit_width == 16:

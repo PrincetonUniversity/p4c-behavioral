@@ -33,10 +33,10 @@
 
 //::  import math
 //::
-//::  ordered_field_instances_all__name_width = []
-//::  ordered_header_instances_all_field__name_width = {}
-//::  for header_name in ordered_header_instances_all:
-//::    ordered_header_instances_all_field__name_width[header_name] = []
+//::  ordered_field_instances_non_virtual__name_width = []
+//::  ordered_header_instances_non_virtual_field__name_width = {}
+//::  for header_name in ordered_header_instances_non_virtual:
+//::    ordered_header_instances_non_virtual_field__name_width[header_name] = []
 //::    proc_fields = []
 //::    for field_name in header_info[header_name]["fields"]:
 //::      if OVS_PARSER_IMP == 0:
@@ -52,13 +52,17 @@
 //::      else:
 //::        assert(False)
 //::      #endif
-//::      ordered_field_instances_all__name_width += [(field_name, bit_width)]
-//::      ordered_header_instances_all_field__name_width[header_name] += [(field_name, bit_width)]
+//::      ordered_field_instances_non_virtual__name_width += [(field_name, bit_width)]
+//::      ordered_header_instances_non_virtual_field__name_width[header_name] += [(field_name, bit_width)]
 //::    #endfor
 //::  #endfor
 //::
 //::  base_oxm_offset = 45
-//::  for field_name, bit_width in ordered_field_instances_all__name_width:
+//::  for header_name in ordered_header_instances_non_virtual:
+//::    if header_name == "standard_metadata":
+//::      continue
+//::    #endif
+//::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
     /* "${field_name}".
      *
      * ${field_name} field.
@@ -72,7 +76,25 @@
      * OXM: OXM_OF_${field_name.upper()}(${base_oxm_offset}) since OF1.5 and v2.3.
      */
     MFF_${field_name.upper()},
-//::    base_oxm_offset += 1
+//::      base_oxm_offset += 1
+
+//::    #endfor
+//::    if header_name in ordered_header_instances_regular:
+    /* "${header_name}_valid".
+     *
+     * ${header_name}_valid field.
+     *
+     * Type: be${8}.
+     * Formatting: hexadecimal.
+     * Maskable: bitwise.
+     * Prerequisites: none.
+     * Access: read/write.
+     * NXM: none.
+     * OXM: OXM_OF_${(header_name).upper()}_VALID(${base_oxm_offset}) since OF1.5 and v2.3.
+     */
+    MFF_${(header_name).upper()}_VALID,
+//::      base_oxm_offset += 1
+//::    #endif
 
 //::  #endfor
 

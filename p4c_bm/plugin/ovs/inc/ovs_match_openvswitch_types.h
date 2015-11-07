@@ -24,10 +24,10 @@
 
 //::  import math
 //::
-//::  ordered_field_instances_all__name_width = []
-//::  ordered_header_instances_all_field__name_width = {}
-//::  for header_name in ordered_header_instances_all:
-//::    ordered_header_instances_all_field__name_width[header_name] = []
+//::  ordered_field_instances_non_virtual__name_width = []
+//::  ordered_header_instances_non_virtual_field__name_width = {}
+//::  for header_name in ordered_header_instances_non_virtual:
+//::    ordered_header_instances_non_virtual_field__name_width[header_name] = []
 //::    proc_fields = []
 //::    for field_name in header_info[header_name]["fields"]:
 //::      if OVS_PARSER_IMP == 0:
@@ -43,19 +43,23 @@
 //::      else:
 //::        assert(False)
 //::      #endif
-//::      ordered_field_instances_all__name_width += [(field_name, bit_width)]
-//::      ordered_header_instances_all_field__name_width[header_name] += [(field_name, bit_width)]
+//::      ordered_field_instances_non_virtual__name_width += [(field_name, bit_width)]
+//::      ordered_header_instances_non_virtual_field__name_width[header_name] += [(field_name, bit_width)]
 //::    #endfor
 //::  #endfor
 //::
 /* -- Called in include/openvswitch/types.h -- */
 #define OVS_FIELD_STRUCTS \
-//::  for field_name, bit_width in ordered_field_instances_all__name_width:
+//::  for field_name, bit_width in ordered_field_instances_non_virtual__name_width:
+//::   if field_name.startswith("standard_metadata"):
+//::     continue
+//::   #endif
 //::   if not (bit_width == 8 or bit_width == 16 or bit_width == 32 or bit_width == 64):
     struct ${field_name}_t { \
         uint8_t data[${bit_width}/8]; \
     }; \
 //::    #endif
 //::  #endfor
+    \
 
 #endif	/* OVS_MATCH_OPENVSWITCH_TYPES_H */
