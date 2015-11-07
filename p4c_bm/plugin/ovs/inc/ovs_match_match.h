@@ -74,6 +74,10 @@
                       sizeof f->${header_name}.hdr.${field_name}); \
 //::      #endif
 //::    #endfor
+//::    if header_name in ordered_header_instances_regular:
+    format_be8_masked(s, "${header_name}_valid", f->${header_name}.${header_name}_valid, \
+                      wc->masks.${header_name}.${header_name}_valid); \
+//::    #endif
     \
 //::  #endfor
 

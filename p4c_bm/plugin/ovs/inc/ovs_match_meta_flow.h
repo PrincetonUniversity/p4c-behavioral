@@ -67,14 +67,25 @@
 //::      #endif
         break; \
 //::    #endfor
+//::    if header_name in ordered_header_instances_regular:
+    case MFF_${(header_name).upper()}_VALID: \
+        value->u8 = flow->${header_name}.${header_name}_valid; \
+        break; \
+//::    #endif
 //::  #endfor
     \
 
 /* -- Called in lib/meta-flow.c -- */
 #define OVS_IS_VALUE_VALID_CASES \
-//::  for field_name, _ in ordered_field_instances_non_virtual__name_width:
+//::  for header_name in ordered_header_instances_non_virtual:
+//::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
     case MFF_${field_name.upper()}: \
         return true; \
+//::    #endfor
+//::    if header_name in ordered_header_instances_regular:
+    case MFF_${(header_name).upper()}_VALID: \
+        return true; \
+//::    #endif
 //::  #endfor
     \
 
@@ -90,6 +101,10 @@
                             sizeof wc->masks.${header_name}.hdr.${field_name}); \
 //::      #endif
 //::    #endfor
+//::    if header_name in ordered_header_instances_regular:
+    case MFF_${(header_name).upper()}_VALID: \
+        return !wc->masks.${header_name}.${header_name}_valid; \
+//::    #endif
 //::  #endfor
     \
 
@@ -112,6 +127,11 @@
 //::      #endif
         break; \
 //::    #endfor
+//::    if header_name in ordered_header_instances_regular:
+    case MFF_${(header_name).upper()}_VALID: \
+        flow->${header_name}.${header_name}_valid = value->u8; \
+        break; \
+//::    #endif
 //::  #endfor
     \
 
@@ -140,6 +160,12 @@
 //::      #endif
         break; \
 //::    #endfor
+//::    if header_name in ordered_header_instances_regular:
+    case MFF_${(header_name).upper()}_VALID: \
+        match->wc.masks.${header_name}.${header_name}_valid = 0xff; \
+        match->flow.${header_name}.${header_name}_valid = value->u8; \
+        break; \
+//::    #endif
 //::  #endfor
     \
 
@@ -159,6 +185,12 @@
 //::      #endif
         break; \
 //::    #endfor
+//::    if header_name in ordered_header_instances_regular:
+    case MFF_${(header_name).upper()}_VALID: \
+        match->flow.${header_name}.${header_name}_valid = 0; \
+        match->wc.masks.${header_name}.${header_name}_valid = 0; \
+        break; \
+//::    #endif
 //::  #endfor
     \
 
@@ -187,6 +219,12 @@
 //::      #endif
         break; \
 //::    #endfor
+//::    if header_name in ordered_header_instances_regular:
+    case MFF_${(header_name).upper()}_VALID: \
+        match->flow.${header_name}.${header_name}_valid = value->u8 & mask->u8; \
+        match->wc.masks.${header_name}.${header_name}_valid = mask->u8; \
+        break; \
+//::    #endif
 //::  #endfor
     \
 

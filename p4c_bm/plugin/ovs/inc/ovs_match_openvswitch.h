@@ -55,6 +55,7 @@
 //::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
     OVS_KEY_ATTR_${field_name.upper()}, \
 //::    #endfor
+    OVS_KEY_ATTR_${header_name.upper()}_VALID, \
 //::  #endfor
     \
 
@@ -75,6 +76,7 @@
         struct ${field_name}_t ${field_name}; \
 //::      #endif
 //::    #endfor
+        uint8_t ${header_name}_valid; \
     }; \
     \
 //::  #endfor

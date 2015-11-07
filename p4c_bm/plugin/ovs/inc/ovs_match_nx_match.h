@@ -78,6 +78,11 @@
             sizeof flow->${header_name}.hdr.${field_name}); \
 //::      #endif
 //::    #endfor
+//::    if header_name in ordered_header_instances_regular:
+    nxm_put_8m(b, MFF_${header_name.upper()}_VALID, oxm, \
+               flow->${header_name}.${header_name}_valid, \
+               match->wc.masks.${header_name}.${header_name}_valid); \
+//::    #endif
     \
 //::  #endfor
 

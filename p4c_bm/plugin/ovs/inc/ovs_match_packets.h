@@ -122,6 +122,7 @@
         struct ${field_name}_t ${field_name}, \
 //::      #endif
 //::    #endfor
+        uint8_t ${header_name}_valid, \
         struct dp_packet *packet); \
     \
 //::  #endfor
@@ -143,6 +144,7 @@
         struct ${field_name}_t ${field_name}, \
 //::      #endif
 //::    #endfor
+        uint8_t ${header_name}_valid, \
         struct dp_packet *packet) \
     { \
         struct ${header_name}_header *${header_name} = &packet->${header_name}; \
@@ -150,6 +152,7 @@
 //::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
         ${header_name}->${field_name} = ${field_name}; \
 //::    #endfor
+        packet->${header_name}_valid = ${header_name}_valid; \
     } \
     \
 //:: #endfor

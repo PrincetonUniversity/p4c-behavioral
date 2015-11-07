@@ -55,6 +55,7 @@
 //::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
     case OVS_KEY_ATTR_${field_name.upper()}: return "${header_name}"; \
 //::    #endfor
+    case OVS_KEY_ATTR_${header_name.upper()}_VALID: return "${header_name}"; \
 //::  #endfor
     \
 
@@ -106,6 +107,11 @@
         break; \
     } \
 //::    #endfor
+    case OVS_KEY_ATTR_${header_name.upper()}_VALID: { \
+        const uint8_t *key = nl_attr_get(a); \
+        format_u8x(ds, "${header_name}_valid", *key, NULL, verbose); \
+        ds_chomp(ds, ','); \
+        break; \
 //::  #endfor
     \
 
@@ -128,6 +134,7 @@
 //::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
         ${header_name}->${field_name} = flow->${header_name}.hdr.${field_name}; \
 //::    #endfor
+        ${header_name}->${header_name}_valid = flow->${header_name}.${header_name}_valid; \
     } \
     \
     static void \
@@ -136,6 +143,7 @@
 //::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
         flow->${header_name}.hdr.${field_name} = ${header_name}->${field_name}; \
 //::    #endfor
+        flow->${header_name}.${header_name}_valid = ${header_name}->${header_name}_valid; \
     } \
     \
 //::  #endfor
@@ -178,6 +186,7 @@
 //::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
     [OVS_KEY_ATTR_${field_name.upper()}] = { .len = ATTR_LEN_VARIABLE }, \
 //::    #endfor
+    [OVS_KEY_ATTR_${header_name.upper()}_VALID] = { .len = ATTR_LEN_VARIABLE }, \
 //::  #endfor
     \
 

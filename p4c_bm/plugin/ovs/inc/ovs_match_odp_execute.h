@@ -73,11 +73,14 @@
                        (uint8_t *) &${field_name}, sizeof(struct ${field_name}_t)); \
 //::      #endif
 //::    #endfor
-            \
+//::    # TODO: the mask check, below, is unnecessary.
+        uint8_t ${header_name}_valid = key->${header_name}_valid | (packet->${header_name}_valid & ~mask->${header_name}_valid); \
+        \
         packet_set_${header_name}( \
 //::    for field_name, _ in ordered_header_instances_non_virtual_field__name_width[header_name]:
             ${field_name}, \
 //::    #endfor
+            ${header_name}_valid, \
             packet); \
     } \
     \
@@ -94,6 +97,7 @@
 //::    for field_name, _ in ordered_header_instances_non_virtual_field__name_width[header_name]:
                 ${header_name}_key->${field_name}, \
 //::    #endfor
+                ${header_name}_key->${header_name}_valid, \
                 packet); \
         } \
         break; \
