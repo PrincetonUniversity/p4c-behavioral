@@ -65,14 +65,16 @@
 //::      # TODO: implement parser implementation style 0 (i.e., non concatenated field parsing).
     OVS_MINIFLOW_OUT \
 //::    elif OVS_PARSER_IMP == 1:
-//::
 //::      # Note: handle call sequence ###
 //::      call_sequence = parse_info["call_sequence"]
+//::
 //::      call_id = 0
 //::      for call in call_sequence:
 //::        type = call[0]
 //::        if type == "extract":
 //::          header_name = call[1]
+    if (OVS_UNLIKELY(size < sizeof(struct ${header_name}_header))) \
+        OVS_MINIFLOW_OUT \
     packet->${header_name}_ofs = ((char *) data) - l2; \
     struct ${header_name}_padded_header *${header_name}_${call_id} = (struct ${header_name}_padded_header *) data_pull(&data, &size, \
         sizeof(struct ${header_name}_header)); \
@@ -87,6 +89,7 @@
     \
 //::        elif type == "set":
 //::          destination = call[1]
+//::
 //::          metadata_name = field_info[destination]["parent_header"]
 //::          aligned_metadata_name = aligned_field_info[destination]["name"]
 //::          aligned_metadata_mask = aligned_field_info[destination]["mask"]
@@ -127,6 +130,7 @@
 //::            #endif
 //::          elif source_type == "latest":
 //::            source = call[3]
+//::
 //::            header_name = field_info[source]["parent_header"]
 //::            aligned_field_name = aligned_field_info[source]["name"]
 //::            aligned_field_mask = aligned_field_info[source]["mask"]
@@ -233,6 +237,7 @@
 //::      # Note: handle state transitions ###
 //::      branch_on = parse_info['branch_on']
 //::      branch_to = parse_info['branch_to']
+//::
 //::      for case in branch_to:
 //::        case_type, case_value, case_mask, case_next_state = case
 //::        if not branch_on:
@@ -296,6 +301,7 @@
 //::                #endif
 //::              elif key_type == "current":
 //::                key_bit_offset, key_bit_width = key_value
+//::
 //::                aligned_key_bit_base_offset = int(key_bit_offset/8)*8
 //::                adjusted_key_bit_base_offset = key_bit_offset - aligned_key_bit_base_offset
 //::                aligned_key_bit_width = int(math.ceil((adjusted_key_bit_base_offset+key_bit_width)/8.0)*8)
