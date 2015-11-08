@@ -22,6 +22,8 @@
 #ifndef OVS_MATCH_FLOW_H
 #define	OVS_MATCH_FLOW_H 1
 
+//::  import math
+//::
 //::  def byte_array_to_int(bytes):
 //::    res = 0
 //::    len_ = len(bytes)
@@ -71,7 +73,7 @@
 //::        type = call[0]
 //::        if type == "extract":
 //::          header_name = call[1]
-    packet->${header_name}_ofs = (char *)data - l2; \
+    packet->${header_name}_ofs = ((char *) data) - l2; \
     struct ${header_name}_padded_header *${header_name}_${call_id} = (struct ${header_name}_padded_header *) data_pull(&data, &size, \
         sizeof(struct ${header_name}_header)); \
 //::          # NOTE: this valid is used by the slow-path
@@ -253,6 +255,7 @@
 //::                aligned_field_bit_width = aligned_field_info[key_value]["bit_width"]
 //::                aligned_field_mask = aligned_field_info[key_value]["mask"]
 //::                aligned_field_bit_offset_hdr = aligned_field_info[key_value]["bit_offset_hdr"]
+//::
 //::                if aligned_field_bit_width == 8:
 //::                  if aligned_field_mask:
         (((packet->${header_name}.${aligned_field_name} & ${hex(aligned_field_mask)}) >> ${aligned_field_bit_offset_hdr}) == ${hex(byte_array_to_int(case_value[key_id:key_id+4]))}) && \
@@ -276,9 +279,9 @@
 //::                  key_id += 4
 //::                elif aligned_field_bit_width == 64:
 //::                  if aligned_field_mask:
-        (((nothll(packet->${header_name}.${aligned_field_name}) & ${hex(aligned_field_mask)}) >> ${aligned_field_bit_offset_hdr}) == ${hex(byte_array_to_int(case_value[key_id:key_id+4]))}) && \
+        (((nothll(packet->${header_name}.${aligned_field_name}) & ${hex(aligned_field_mask)}) >> ${aligned_field_bit_offset_hdr}) == ${hex(byte_array_to_int(case_value[key_id:key_id+8]))}) && \
 //::                  else:
-        (ntohll(packet->${header_name}.${field_name}) == ${hex(byte_array_to_int(case_value[key_id:key_id+4]))}) && \
+        (ntohll(packet->${header_name}.${field_name}) == ${hex(byte_array_to_int(case_value[key_id:key_id+8]))}) && \
 //::                  #endif
 //::                  key_id += 8
 //::                elif aligned_field_bit_width <= 64:
@@ -293,9 +296,46 @@
 //::                #endif
 //::              elif key_type == "current":
 //::                key_bit_offset, key_bit_width = key_value
-//::                assert(False)  # TODO: handle this case (i.e., for current()).
+//::                aligned_key_bit_base_offset = int(key_bit_offset/8)*8
+//::                adjusted_key_bit_base_offset = key_bit_offset - aligned_key_bit_base_offset
+//::                aligned_key_bit_width = int(math.ceil((adjusted_key_bit_base_offset+key_bit_width)/8.0)*8)
+//::                aligned_key_bit_offset_hdr = aligned_key_bit_width - ((adjusted_key_bit_base_offset%aligned_key_bit_width) + key_bit_width)
+//::                aligned_key_mask = ((1 << key_bit_width) - 1) << aligned_key_bit_offset_hdr
+//::                aligned_key_mask = 0 if (((1 << aligned_key_bit_width) - 1) == aligned_key_mask) else aligned_key_mask
+//::
+//::                if aligned_key_bit_width == 8:
+//::                  if aligned_key_mask:
+        ((((*(uint8_t *) (((char *) data) + ${aligned_key_bit_base_offset/8})) & ${hex(aligned_key_mask)}) >> ${aligned_key_bit_offset_hdr}) == ${hex(byte_array_to_int(case_value[key_id:key_id+4]))}) && \
+//::                  else:
+        ((*(uint8_t *) (((char *) data) + ${aligned_key_bit_base_offset/8})) == ${hex(byte_array_to_int(case_value[key_id:key_id+4]))}) && \
+//::                  #endif
+//::                  key_id += 4
+//::                elif aligned_key_bit_width == 16:
+//::                  if aligned_key_mask:
+        (((ntohs((*(ovs_be16 *) (((char *) data) + ${aligned_key_bit_base_offset/8}))) & ${hex(aligned_key_mask)}) >> ${aligned_key_bit_offset_hdr}) == ${hex(byte_array_to_int(case_value[key_id:key_id+4]))}) && \
+//::                  else:
+        (ntohs((*(ovs_be16 *) (((char *) data) + ${aligned_key_bit_base_offset/8}))) == ${hex(byte_array_to_int(case_value[key_id:key_id+4]))}) && \
+//::                  #endif
+//::                  key_id += 4
+//::                elif aligned_key_bit_width == 32:
+//::                  if aligned_key_mask:
+        (((ntohl((*(ovs_be32 *) (((char *) data) + ${aligned_key_bit_base_offset/8}))) & ${hex(aligned_key_mask)}) >> ${aligned_key_bit_offset_hdr}) == ${hex(byte_array_to_int(case_value[key_id:key_id+4]))}) && \
+//::                  else:
+        (ntohl((*(ovs_be32 *) (((char *) data) + ${aligned_key_bit_base_offset/8}))) == ${hex(byte_array_to_int(case_value[key_id:key_id+4]))}) && \
+//::                  #endif
+//::                  key_id += 4
+//::                elif aligned_key_bit_width == 64:
+//::                  if aligned_key_mask:
+        (((ntohl((*(ovs_be64 *) (((char *) data) + ${aligned_key_bit_base_offset/8}))) & ${hex(aligned_key_mask)}) >> ${aligned_key_bit_offset_hdr}) == ${hex(byte_array_to_int(case_value[key_id:key_id+8]))}) && \
+//::                  else:
+        (ntohl((*(ovs_be64 *) (((char *) data) + ${aligned_key_bit_base_offset/8}))) == ${hex(byte_array_to_int(case_value[key_id:key_id+8]))}) && \
+//::                  #endif
+//::                  key_id += 8
+//::                else:
+//::                  assert(False)  # TODO: right now only covers up to 64 bits, look into how to extend this range.
+//::                #endif
 //::              else:
-//::                assert(False)  # TODO: handle this case.
+//::                assert(False)
 //::              #endif
 //::            #endfor
         true) \
