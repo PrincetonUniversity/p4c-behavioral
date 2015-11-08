@@ -54,6 +54,7 @@
 //::    if header_name == "standard_metadata":
 //::      continue
 //::    #endif
+//::
 //::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
 //::      if bit_width == 8:
     nxm_put_8m(b, MFF_${field_name.upper()}, oxm, \

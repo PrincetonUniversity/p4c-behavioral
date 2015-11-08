@@ -79,6 +79,7 @@
 //::      base_oxm_offset += 1
 
 //::    #endfor
+//::
 //::    if header_name in ordered_header_instances_regular:
     /* "${header_name}_valid".
      *

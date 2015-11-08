@@ -24,10 +24,10 @@
 
 //::  import math
 //::
-//::  ordered_field_instances_all__name_width = []
-//::  ordered_header_instances_all_field__name_width = {}
-//::  for header_name in ordered_header_instances_all:
-//::    ordered_header_instances_all_field__name_width[header_name] = []
+//::  ordered_field_instances_non_virtual__name_width = []
+//::  ordered_header_instances_non_virtual_field__name_width = {}
+//::  for header_name in ordered_header_instances_non_virtual:
+//::    ordered_header_instances_non_virtual_field__name_width[header_name] = []
 //::    proc_fields = []
 //::    for field_name in header_info[header_name]["fields"]:
 //::      if OVS_PARSER_IMP == 0:
@@ -43,8 +43,8 @@
 //::      else:
 //::        assert(False)
 //::      #endif
-//::      ordered_field_instances_all__name_width += [(field_name, bit_width)]
-//::      ordered_header_instances_all_field__name_width[header_name] += [(field_name, bit_width)]
+//::      ordered_field_instances_non_virtual__name_width += [(field_name, bit_width)]
+//::      ordered_header_instances_non_virtual_field__name_width[header_name] += [(field_name, bit_width)]
 //::    #endfor
 //::  #endfor
 //::
@@ -93,7 +93,7 @@
 /* -- Called in ofproto/ofproto-dpif-xlate.c -- */
 #define OVS_COMPOSE_ADD_TO_FIELD_CASES \
 //::  for header_name in ordered_header_instances_regular:
-//::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
+//::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
     case MFF_${field_name.upper()}: \
 //::      if bit_width == 8:
         compose_add_to_field_(ctx, OVS_KEY_ATTR_${field_name.upper()}, &value->u8, sizeof value->u8); \
@@ -104,7 +104,7 @@
 //::      elif bit_width == 64:
         compose_add_to_field_(ctx, OVS_KEY_ATTR_${field_name.upper()}, &value->be64, sizeof value->be64); \
 //::      else:
-//::        pass  # TODO: handle this case.
+//::        pass  # TODO: handle this case (i.e., for arbitrary byte sizes).
 //::      #endif
         break; \
 //::    #endfor
@@ -114,7 +114,7 @@
 /* -- Called in ofproto/ofproto-dpif-xlate.c -- */
 #define OVS_COMPOSE_SUB_FROM_FIELD_CASES \
 //::  for header_name in ordered_header_instances_regular:
-//::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
+//::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
     case MFF_${field_name.upper()}: \
 //::      if bit_width == 8:
         compose_sub_from_field_(ctx, OVS_KEY_ATTR_${field_name.upper()}, &value->u8, sizeof value->u8); \
@@ -125,7 +125,7 @@
 //::      elif bit_width == 64:
         compose_sub_from_field_(ctx, OVS_KEY_ATTR_${field_name.upper()}, &value->be64, sizeof value->be64); \
 //::      else:
-//::        pass  # TODO: handle this case.
+//::        pass  # TODO: handle this case (i.e., for arbitrary byte sizes).
 //::      #endif
         break; \
 //::    #endfor
@@ -135,7 +135,7 @@
 /* -- Called in ofproto/ofproto-dpif-xlate.c -- */
 #define OVS_COMPOSE_CALC_FIELDS_CASES \
 //::  for header_name in ordered_header_instances_regular:
-//::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
+//::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
     case MFF_${field_name.upper()}: \
         nl_msg_put_flag(ctx->odp_actions, OVS_KEY_ATTR_${field_name.upper()}); \
         break; \

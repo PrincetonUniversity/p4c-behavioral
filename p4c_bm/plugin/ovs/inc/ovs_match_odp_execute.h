@@ -68,9 +68,9 @@
         ovs_be64 ${field_name} = key->${field_name} | (${header_name}->${field_name} & ~mask->${field_name}); \
 //::      else:
         struct ${field_name}_t ${field_name}; \
-        ovs_apply_mask((const uint8_t *) &key->${field_name}, (const uint8_t *) &${header_name}->${field_name}, \
-                       (const uint8_t *) &mask->${field_name}, \
-                       (uint8_t *) &${field_name}, sizeof(struct ${field_name}_t)); \
+        apply_mask_1((const uint8_t *) &key->${field_name}, (const uint8_t *) &${header_name}->${field_name}, \
+                     (const uint8_t *) &mask->${field_name}, \
+                     (uint8_t *) &${field_name}, sizeof(struct ${field_name}_t)); \
 //::      #endif
 //::    #endfor
 //::    # TODO: this masking check is unnecessary.

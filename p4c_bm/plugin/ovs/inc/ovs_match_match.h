@@ -54,6 +54,7 @@
 //::    if header_name == "standard_metadata":
 //::      continue
 //::    #endif
+//::
 //::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
 //::      if bit_width == 8:
     format_be8_masked(s, "${field_name}", f->${header_name}.hdr.${field_name}, \
@@ -74,6 +75,7 @@
                       sizeof f->${header_name}.hdr.${field_name}); \
 //::      #endif
 //::    #endfor
+//::
 //::    if header_name in ordered_header_instances_regular:
     format_be8_masked(s, "${header_name}_valid", f->${header_name}.${header_name}_valid, \
                       wc->masks.${header_name}.${header_name}_valid); \

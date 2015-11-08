@@ -24,10 +24,10 @@
 
 //::  import math
 //::
-//::  ordered_field_instances_all__name_width = []
-//::  ordered_header_instances_all_field__name_width = {}
-//::  for header_name in ordered_header_instances_all:
-//::    ordered_header_instances_all_field__name_width[header_name] = []
+//::  ordered_field_instances_non_virtual__name_width = []
+//::  ordered_header_instances_non_virtual_field__name_width = {}
+//::  for header_name in ordered_header_instances_non_virtual:
+//::    ordered_header_instances_non_virtual_field__name_width[header_name] = []
 //::    proc_fields = []
 //::    for field_name in header_info[header_name]["fields"]:
 //::      if OVS_PARSER_IMP == 0:
@@ -43,8 +43,8 @@
 //::      else:
 //::        assert(False)
 //::      #endif
-//::      ordered_field_instances_all__name_width += [(field_name, bit_width)]
-//::      ordered_header_instances_all_field__name_width[header_name] += [(field_name, bit_width)]
+//::      ordered_field_instances_non_virtual__name_width += [(field_name, bit_width)]
+//::      ordered_header_instances_non_virtual_field__name_width[header_name] += [(field_name, bit_width)]
 //::    #endfor
 //::  #endfor
 //::
@@ -63,7 +63,7 @@
 /* -- Called in lib/odp-execute.c -- */
 #define OVS_ODP_EXECUTE_ADD_TO_FIELD_CASES \
 //::  for header_name in ordered_header_instances_regular:
-//::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
+//::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
     case OVS_KEY_ATTR_${field_name.upper()}: { \
 //::      if bit_width == 8:
         const uint8_t *value = nl_attr_get(a); \
@@ -93,7 +93,7 @@
 /* -- Called in lib/odp-execute.c -- */
 #define OVS_ODP_EXECUTE_SUB_FROM_FIELD_CASES \
 //::  for header_name in ordered_header_instances_regular:
-//::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
+//::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
     case OVS_KEY_ATTR_${field_name.upper()}: { \
 //::      if bit_width == 8:
         const uint8_t *value = nl_attr_get(a); \
@@ -123,7 +123,7 @@
 /* -- Called in lib/odp-execute.c -- */
 #define OVS_ODP_EXECUTE_CALC_FIELDS_SRCS_CASES \
 //::  for header_name in ordered_header_instances_regular:
-//::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
+//::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
     case OVS_KEY_ATTR_${field_name.upper()}: \
         memcpy(buf, &packet->${header_name}.${field_name}, sizeof packet->${header_name}.${field_name}); \
         buf += sizeof packet->${header_name}.${field_name}; \
@@ -135,7 +135,7 @@
 /* -- Called in lib/odp-execute.c -- */
 #define OVS_ODP_EXECUTE_CALC_FIELDS_VERIFY_DST_FIELD_16BIT_CASES \
 //::  for header_name in ordered_header_instances_regular:
-//::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
+//::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
 //::      if bit_width == 16:
     case OVS_KEY_ATTR_${field_name.upper()}: \
         return (packet->${header_name}.${field_name} == res16); \
@@ -147,7 +147,7 @@
 /* -- Called in lib/odp-execute.c -- */
 #define OVS_ODP_EXECUTE_CALC_FIELDS_UPDATE_DST_FIELD_16BIT_CASES \
 //::  for header_name in ordered_header_instances_regular:
-//::    for field_name, bit_width in ordered_header_instances_all_field__name_width[header_name]:
+//::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
 //::      if bit_width == 16:
     case OVS_KEY_ATTR_${field_name.upper()}: \
         packet->${header_name}.${field_name} = res16; \

@@ -54,6 +54,7 @@
 //::    if header_name == "standard_metadata":
 //::      continue
 //::    #endif
+//::
 //::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
     case MFF_${field_name.upper()}: \
 //::      if bit_width == 8:
@@ -70,6 +71,7 @@
 //::      #endif
         break; \
 //::    #endfor
+//::
 //::    if header_name in ordered_header_instances_regular:
     case MFF_${(header_name).upper()}_VALID: \
         value->u8 = flow->${header_name}.${header_name}_valid; \
@@ -84,10 +86,12 @@
 //::    if header_name == "standard_metadata":
 //::      continue
 //::    #endif
+//::
 //::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
     case MFF_${field_name.upper()}: \
         return true; \
 //::    #endfor
+//::
 //::    if header_name in ordered_header_instances_regular:
     case MFF_${(header_name).upper()}_VALID: \
         return true; \
@@ -101,6 +105,7 @@
 //::    if header_name == "standard_metadata":
 //::      continue
 //::    #endif
+//::
 //::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
     case MFF_${field_name.upper()}: \
 //::      if bit_width == 8 or bit_width == 16 or bit_width == 32 or bit_width == 64:
@@ -110,6 +115,7 @@
                             sizeof wc->masks.${header_name}.hdr.${field_name}); \
 //::      #endif
 //::    #endfor
+//::
 //::    if header_name in ordered_header_instances_regular:
     case MFF_${(header_name).upper()}_VALID: \
         return !wc->masks.${header_name}.${header_name}_valid; \
@@ -123,6 +129,7 @@
 //::    if header_name == "standard_metadata":
 //::      continue
 //::    #endif
+//::
 //::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
     case MFF_${field_name.upper()}: \
 //::      if bit_width == 8:
@@ -139,6 +146,7 @@
 //::      #endif
         break; \
 //::    #endfor
+//::
 //::    if header_name in ordered_header_instances_regular:
     case MFF_${(header_name).upper()}_VALID: \
         flow->${header_name}.${header_name}_valid = value->u8; \
@@ -153,6 +161,7 @@
 //::    if header_name == "standard_metadata":
 //::      continue
 //::    #endif
+//::
 //::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
     case MFF_${field_name.upper()}: \
 //::      if bit_width == 8:
@@ -175,6 +184,7 @@
 //::      #endif
         break; \
 //::    #endfor
+//::
 //::    if header_name in ordered_header_instances_regular:
     case MFF_${(header_name).upper()}_VALID: \
         match->wc.masks.${header_name}.${header_name}_valid = 0xff; \
@@ -190,6 +200,7 @@
 //::    if header_name == "standard_metadata":
 //::      continue
 //::    #endif
+//::
 //::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
     case MFF_${field_name.upper()}: \
 //::      if bit_width == 8 or bit_width == 16 or bit_width == 32 or bit_width == 64:
@@ -203,6 +214,7 @@
 //::      #endif
         break; \
 //::    #endfor
+//::
 //::    if header_name in ordered_header_instances_regular:
     case MFF_${(header_name).upper()}_VALID: \
         match->flow.${header_name}.${header_name}_valid = 0; \
@@ -218,6 +230,7 @@
 //::    if header_name == "standard_metadata":
 //::      continue
 //::    #endif
+//::
 //::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
     case MFF_${field_name.upper()}: \
 //::      if bit_width == 8:
@@ -240,6 +253,7 @@
 //::      #endif
         break; \
 //::    #endfor
+//::
 //::    if header_name in ordered_header_instances_regular:
     case MFF_${(header_name).upper()}_VALID: \
         match->flow.${header_name}.${header_name}_valid = value->u8 & mask->u8; \

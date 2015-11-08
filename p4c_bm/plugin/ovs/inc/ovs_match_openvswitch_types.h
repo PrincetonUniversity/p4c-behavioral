@@ -54,6 +54,7 @@
 //::   if field_name.startswith("standard_metadata"):
 //::     continue
 //::   #endif
+//::
 //::   if not (bit_width == 8 or bit_width == 16 or bit_width == 32 or bit_width == 64):
     struct ${field_name}_t { \
         uint8_t data[${bit_width}/8]; \

@@ -93,6 +93,7 @@
 //::      run_bit_width += 8
 //::      valid_byte = 1
 //::    #endif
+//::
 //::    pad_bits = 64 - (run_bit_width % 64)
 //::    pad_bytes = 0
 //::    if pad_bits < 64:
