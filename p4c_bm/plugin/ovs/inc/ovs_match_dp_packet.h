@@ -25,9 +25,9 @@
 /* -- Called in lib/dp-packet.h -- */
 #define OVS_HDR_ATTRS \
 //::  for header_name in ordered_header_instances_regular:
-    uint16_t ${header_name}_ofs; \
-    struct ${header_name}_header ${header_name}; \
-    uint8_t ${header_name}_valid; \
+    uint16_t _${header_name}_ofs; \
+    struct _${header_name}_header _${header_name}; \
+    uint8_t _${header_name}_valid; \
     \
 //::  #endfor
     uint16_t payload_ofs; \
@@ -36,9 +36,9 @@
 /* -- Called in lib/dp-packet.h -- */
 #define OVS_HDR_RESET_ATTRS \
 //::  for header_name in ordered_header_instances_regular:
-    b->${header_name}_ofs = UINT16_MAX; \
-    memset(&b->${header_name}, 0x00, sizeof(struct ${header_name}_header)); \
-    b->${header_name}_valid = 0; \
+    b->_${header_name}_ofs = UINT16_MAX; \
+    memset(&b->_${header_name}, 0x00, sizeof(struct _${header_name}_header)); \
+    b->_${header_name}_valid = 0; \
     \
 //::  #endfor
     b->payload_ofs = UINT16_MAX; \

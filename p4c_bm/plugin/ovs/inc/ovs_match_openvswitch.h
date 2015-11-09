@@ -50,19 +50,22 @@
 //::
 /* -- Called in datapath/linux/compat/include/linux/openvswitch.h -- */
 #define OVS_KEY_ATTRS \
-//::  for header_name in ordered_header_instances_regular:
-    OVS_KEY_ATTR_${header_name.upper()}, \
-//::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
-    OVS_KEY_ATTR_${field_name.upper()}, \
-//::    #endfor
-    OVS_KEY_ATTR_${header_name.upper()}_VALID, \
+//::  for header_name in ordered_header_instances_non_virtual:
+//::    if header_name == "standard_metadata":
+//::      continue
+//::    #endif
+    OVS_KEY_ATTR__${header_name.upper()}, \
 //::  #endfor
+    OVS_KEY_ATTR_VALID, \
     \
 
 /* -- Called in datapath/linux/compat/include/linux/openvswitch.h -- */
 #define OVS_KEY_STRUCTS \
-//::  for header_name in ordered_header_instances_regular:
-    struct ovs_key_${header_name} { \
+//::  for header_name in ordered_header_instances_non_virtual:
+//::    if header_name == "standard_metadata":
+//::      continue
+//::    #endif
+    struct ovs_key__${header_name} { \
 //::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
 //::      if bit_width == 8:
         uint8_t ${field_name}; \
@@ -76,9 +79,14 @@
         struct ${field_name}_t ${field_name}; \
 //::      #endif
 //::    #endfor
-        uint8_t ${header_name}_valid; \
     }; \
     \
 //::  #endfor
+    struct ovs_key_valid { \
+//::  for header_name in ordered_header_instances_regular:
+        uint8_t _${header_name}_valid; \
+//::  #endfor
+    }; \
+    \
 
 #endif	/* OVS_MATCH_OPENVSWITCH_H */

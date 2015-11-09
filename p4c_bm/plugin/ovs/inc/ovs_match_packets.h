@@ -54,9 +54,10 @@
 //::      pass
 //::    else:
 //::      header_len = sum([bit_width for _, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]])/8
-#define ${header_name.upper()}_HEADER_LEN ${header_len}
+#define _${header_name.upper()}_HEADER_LEN ${header_len}
 //::    #endif
 //::  #endfor
+#define VALID_HEADER_LEN ${len(ordered_header_instances_regular)}
 
 /* -- Called in lib/packets.h -- */
 #define OVS_HDR_STRUCTS \
@@ -66,7 +67,7 @@
 //::    #endif
 //::    run_bit_width = 0
     OVS_PACKED( \
-    struct ${header_name}_header { \
+    struct _${header_name}_header { \
 //::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
 //::      if bit_width == 8:
         uint8_t ${field_name}; \
@@ -82,18 +83,11 @@
 //::      run_bit_width += bit_width
 //::    #endfor
     }); \
-    BUILD_ASSERT_DECL(${header_name.upper()}_HEADER_LEN == sizeof(struct ${header_name}_header)); \
+    BUILD_ASSERT_DECL(_${header_name.upper()}_HEADER_LEN == sizeof(struct _${header_name}_header)); \
     \
     OVS_PACKED( \
-    struct ${header_name}_padded_header { \
-        struct ${header_name}_header hdr; \
-//::    valid_byte = 0
-//::    if header_name in ordered_header_instances_regular:
-        uint8_t ${header_name}_valid; \
-//::      run_bit_width += 8
-//::      valid_byte = 1
-//::    #endif
-//::
+    struct _${header_name}_padded_header { \
+        struct _${header_name}_header hdr; \
 //::    pad_bits = 64 - (run_bit_width % 64)
 //::    pad_bytes = 0
 //::    if pad_bits < 64:
@@ -102,14 +96,35 @@
 //::    #endif
     }); \
     BUILD_ASSERT_DECL( \
-        ${header_name.upper()}_HEADER_LEN+${valid_byte}+${pad_bytes} == sizeof(struct ${header_name}_padded_header)); \
+        _${header_name.upper()}_HEADER_LEN+${pad_bytes} == sizeof(struct _${header_name}_padded_header)); \
     \
 //::  #endfor
+    OVS_PACKED( \
+    struct valid_header { \
+//::  for header_name in ordered_header_instances_regular:
+        uint8_t _${header_name}_valid; \
+//::  #endfor
+    }); \
+    BUILD_ASSERT_DECL(VALID_HEADER_LEN == sizeof(struct valid_header)); \
+    \
+    OVS_PACKED( \
+    struct valid_padded_header { \
+        struct valid_header hdr; \
+//::    pad_bits = 64 - ((len(ordered_header_instances_regular)*8) % 64)
+//::    pad_bytes = 0
+//::    if pad_bits < 64:
+//::      pad_bytes = pad_bits/8
+        uint8_t pad[${pad_bytes}]; \
+//::    #endif
+    }); \
+    BUILD_ASSERT_DECL( \
+        VALID_HEADER_LEN+${pad_bytes} == sizeof(struct valid_padded_header)); \
+    \
 
 /* -- Called in lib/packets.h -- */
 #define OVS_HDR_DECLS \
 //::  for header_name in ordered_header_instances_regular:
-    void packet_set_${header_name}( \
+    void packet_set__${header_name}( \
 //::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
 //::      if bit_width == 8:
         uint8_t ${field_name}, \
@@ -123,15 +138,20 @@
         struct ${field_name}_t ${field_name}, \
 //::      #endif
 //::    #endfor
-        uint8_t ${header_name}_valid, \
         struct dp_packet *packet); \
     \
 //::  #endfor
+    void packet_set_valid( \
+//::  for header_name in ordered_header_instances_regular:
+        uint8_t _${header_name}_valid, \
+//::  #endfor
+        struct dp_packet *packet); \
+    \
 
 /* -- Called in lib/packets.c -- */
 #define OVS_HDR_DEFS \
 //::  for header_name in ordered_header_instances_regular:
-    void packet_set_${header_name}( \
+    void packet_set__${header_name}( \
 //::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
 //::      if bit_width == 8:
         uint8_t ${field_name}, \
@@ -145,17 +165,27 @@
         struct ${field_name}_t ${field_name}, \
 //::      #endif
 //::    #endfor
-        uint8_t ${header_name}_valid, \
         struct dp_packet *packet) \
     { \
-        struct ${header_name}_header *${header_name} = &packet->${header_name}; \
+        struct _${header_name}_header *_${header_name} = &packet->_${header_name}; \
         \
 //::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
-        ${header_name}->${field_name} = ${field_name}; \
+        _${header_name}->${field_name} = ${field_name}; \
 //::    #endfor
-        packet->${header_name}_valid = ${header_name}_valid; \
     } \
     \
 //:: #endfor
+//::
+    void packet_set_valid( \
+//::  for header_name in ordered_header_instances_regular:
+        uint8_t _${header_name}_valid, \
+//::  #endfor
+        struct dp_packet *packet) \
+    { \
+//::  for header_name in ordered_header_instances_regular:
+        packet->_${header_name}_valid = _${header_name}_valid; \
+//::  #endfor
+    } \
+    \
 
 #endif	/* OVS_MATCH_PACKETS_H */

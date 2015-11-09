@@ -50,173 +50,224 @@
 //::
 /* -- Called in lib/odp-util.c -- */
 #define OVS_KEY_ATTRS_TO_STRING_CASES \
-//::  for header_name in ordered_header_instances_regular:
-    case OVS_KEY_ATTR_${header_name.upper()}: return "${header_name}"; \
-//::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
-    case OVS_KEY_ATTR_${field_name.upper()}: return "${header_name}"; \
-//::    #endfor
-    case OVS_KEY_ATTR_${header_name.upper()}_VALID: return "${header_name}"; \
+//::  for header_name in ordered_header_instances_non_virtual:
+//::    if header_name == "standard_metadata":
+//::      continue
+//::    #endif
+    case OVS_KEY_ATTR__${header_name.upper()}: return "${header_name}"; \
 //::  #endfor
+    case OVS_KEY_ATTR_VALID: return "valid"; \
     \
 
 /* -- Called in lib/odp-util.c -- */
 #define OVS_FORMAT_ODP_KEY_ATTR_CASES \
-//::  for header_name in ordered_header_instances_regular:
-    case OVS_KEY_ATTR_${header_name.upper()}: { \
-        const struct ovs_key_${header_name} *key = nl_attr_get(a); \
-        const struct ovs_key_${header_name} *mask = ma ? nl_attr_get(ma) : NULL; \
+//::  for header_name in ordered_header_instances_non_virtual:
+//::    if header_name == "standard_metadata":
+//::      continue
+//::    #endif
+    case OVS_KEY_ATTR__${header_name.upper()}: { \
+        const struct ovs_key__${header_name} *key = nl_attr_get(a); \
+        const struct ovs_key__${header_name} *mask = ma ? nl_attr_get(ma) : NULL; \
         \
 //::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
 //::      if bit_width == 8:
         format_u8x(ds, "${field_name}", key->${field_name}, MASK(mask, ${field_name}), verbose); \
 //::      elif bit_width == 16:
-        format_be16(ds, "${field_name}", key->${field_name}, MASK(mask, ${field_name}), verbose); \
+        format_be16x(ds, "${field_name}", key->${field_name}, MASK(mask, ${field_name}), verbose); \
 //::      elif bit_width == 32:
-        format_be32(ds, "${field_name}", key->${field_name}, MASK(mask, ${field_name}), verbose); \
+        format_be32x(ds, "${field_name}", key->${field_name}, MASK(mask, ${field_name}), verbose); \
 //::      elif bit_width == 64:
-        format_be64(ds, "${field_name}", key->${field_name}, MASK(mask, ${field_name}), verbose); \
+        format_be64x(ds, "${field_name}", key->${field_name}, MASK(mask, ${field_name}), verbose); \
 //::      else:
         format_bex(ds, "${field_name}", (const uint8_t *) &key->${field_name}, \
                    mask ? (const uint8_t (*)[]) &mask->${field_name} : NULL, \
                    sizeof(struct ${field_name}_t), verbose); \
 //::      #endif
 //::    #endfor
-        format_u8x(ds, "${header_name}_valid", key->${header_name}_valid, NULL, verbose); \
-        ds_chomp(ds, ','); \
-        break; \
-    } \
-//::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
-    case OVS_KEY_ATTR_${field_name.upper()}: { \
-//::      if bit_width == 8:
-        const uint8_t *key = nl_attr_get(a); \
-        format_u8x(ds, "${field_name}", *key, NULL, verbose); \
-//::      elif bit_width == 16:
-        const ovs_be16 *key = nl_attr_get(a); \
-        format_be16(ds, "${field_name}", *key, NULL, verbose); \
-//::      elif bit_width == 32:
-        const ovs_be32 *key = nl_attr_get(a); \
-        format_be32(ds, "${field_name}", *key, NULL, verbose); \
-//::      elif bit_width == 64:
-        const ovs_be64 *key = nl_attr_get(a); \
-        format_be64(ds, "${field_name}", *key, NULL, verbose); \
-//::      else:
-        const struct ${field_name}_t *key = nl_attr_get(a); \
-        format_bex(ds, "${field_name}", (const uint8_t *) key, NULL, \
-                   sizeof(struct ${field_name}_t), verbose); \
-//::      #endif
-        ds_chomp(ds, ','); \
-        break; \
-    } \
-//::    #endfor
-    case OVS_KEY_ATTR_${header_name.upper()}_VALID: { \
-        const uint8_t *key = nl_attr_get(a); \
-        format_u8x(ds, "${header_name}_valid", *key, NULL, verbose); \
         ds_chomp(ds, ','); \
         break; \
     } \
 //::  #endfor
+    case OVS_KEY_ATTR_VALID: { \
+        const struct ovs_key_valid *key = nl_attr_get(a); \
+        const struct ovs_key_valid *mask = ma ? nl_attr_get(ma) : NULL; \
+        \
+//::  for header_name in ordered_header_instances_regular:
+        format_u8x(ds, "${header_name}_valid", key->_${header_name}_valid, MASK(mask, _${header_name}_valid), verbose); \
+//::  #endfor
+        ds_chomp(ds, ','); \
+        break; \
+    } \
     \
 
 /* -- Called in lib/odp-util.c -- */
 #define OVS_SET_FUNC_DECLS \
-//::  for header_name in ordered_header_instances_regular:
+//::  for header_name in ordered_header_instances_non_virtual:
+//::    if header_name == "standard_metadata":
+//::      continue
+//::    #endif
     static void \
-    get_${header_name}_key(const struct flow *flow, struct ovs_key_${header_name} *${header_name}); \
+    get__${header_name}_key(const struct flow *flow, struct ovs_key__${header_name} *_${header_name}); \
     static void \
-    put_${header_name}_key(const struct ovs_key_${header_name} *${header_name}, struct flow *flow); \
+    put__${header_name}_key(const struct ovs_key__${header_name} *_${header_name}, struct flow *flow); \
     \
 //::  #endfor
+    static void \
+    get_valid_key(const struct flow *flow, struct ovs_key_valid *valid); \
+    static void \
+    put_valid_key(const struct ovs_key_valid *valid, struct flow *flow); \
+    \
 
 /* -- Called in lib/odp-util.c -- */
 #define OVS_SET_FUNC_DEFS \
-//::  for header_name in ordered_header_instances_regular:
+//::  for header_name in ordered_header_instances_non_virtual:
+//::    if header_name == "standard_metadata":
+//::      continue
+//::    #endif
     static void \
-    get_${header_name}_key(const struct flow *flow, struct ovs_key_${header_name} *${header_name}) \
+    get__${header_name}_key(const struct flow *flow, struct ovs_key__${header_name} *_${header_name}) \
     { \
 //::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
-        ${header_name}->${field_name} = flow->${header_name}.hdr.${field_name}; \
+        _${header_name}->${field_name} = flow->_${header_name}.hdr.${field_name}; \
 //::    #endfor
-        ${header_name}->${header_name}_valid = flow->${header_name}.${header_name}_valid; \
     } \
     \
     static void \
-    put_${header_name}_key(const struct ovs_key_${header_name} *${header_name}, struct flow *flow) \
+    put__${header_name}_key(const struct ovs_key__${header_name} *_${header_name}, struct flow *flow) \
     { \
 //::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
-        flow->${header_name}.hdr.${field_name} = ${header_name}->${field_name}; \
+        flow->_${header_name}.hdr.${field_name} = _${header_name}->${field_name}; \
 //::    #endfor
-        flow->${header_name}.${header_name}_valid = ${header_name}->${header_name}_valid; \
     } \
     \
 //::  #endfor
+    static void \
+    get_valid_key(const struct flow *flow, struct ovs_key_valid *valid) \
+    { \
+//::  for header_name in ordered_header_instances_regular:
+        valid->_${header_name}_valid = flow->valid.hdr._${header_name}_valid; \
+//::  #endfor
+    } \
+    \
+    static void \
+    put_valid_key(const struct ovs_key_valid *valid, struct flow *flow) \
+    { \
+//::  for header_name in ordered_header_instances_regular:
+        flow->valid.hdr._${header_name}_valid = valid->_${header_name}_valid; \
+//::  #endfor
+    } \
+    \
 
 /* -- Called in lib/odp-util.c -- */
 #define OVS_COMMIT_ACTION_FUNCS \
 //::  for header_name in ordered_header_instances_regular:
     static void \
-    commit_set_${header_name}_action(const struct flow *flow, struct flow *base_flow, \
+    commit_set__${header_name}_action(const struct flow *flow, struct flow *base_flow, \
                struct ofpbuf *odp_actions, \
                struct flow_wildcards *wc, \
                bool use_masked) \
     { \
-        struct ovs_key_${header_name} key, base, mask; \
+        struct ovs_key__${header_name} key, base, mask; \
         \
-        get_${header_name}_key(flow, &key); \
-        get_${header_name}_key(base_flow, &base); \
-        get_${header_name}_key(&wc->masks, &mask); \
+        get__${header_name}_key(flow, &key); \
+        get__${header_name}_key(base_flow, &base); \
+        get__${header_name}_key(&wc->masks, &mask); \
         \
-        if (commit(OVS_KEY_ATTR_${header_name.upper()}, use_masked, \
+        if (commit(OVS_KEY_ATTR__${header_name.upper()}, use_masked, \
                    &key, &base, &mask, sizeof key, odp_actions)) { \
-            put_${header_name}_key(&base, base_flow); \
-            put_${header_name}_key(&mask, &wc->masks); \
+            put__${header_name}_key(&base, base_flow); \
+            put__${header_name}_key(&mask, &wc->masks); \
         } \
     } \
     \
 //::  #endfor
+    static void \
+    commit_set_valid_action(const struct flow *flow, struct flow *base_flow, \
+               struct ofpbuf *odp_actions, \
+               struct flow_wildcards *wc, \
+               bool use_masked) \
+    { \
+        struct ovs_key_valid key, base, mask; \
+        \
+        get_valid_key(flow, &key); \
+        get_valid_key(base_flow, &base); \
+        get_valid_key(&wc->masks, &mask); \
+        \
+        if (commit(OVS_KEY_ATTR_VALID, use_masked, \
+                   &key, &base, &mask, sizeof key, odp_actions)) { \
+            put_valid_key(&base, base_flow); \
+            put_valid_key(&mask, &wc->masks); \
+        } \
+    } \
+    \
 
 /* -- Called in lib/odp-util.c -- */
 #define OVS_COMMIT_ODP_ACTIONS_FUNCS \
 //::  for header_name in ordered_header_instances_regular:
-    commit_set_${header_name}_action(flow, base, odp_actions, wc, use_masked); \
+    commit_set__${header_name}_action(flow, base, odp_actions, wc, use_masked); \
 //::  #endfor
+    commit_set_valid_action(flow, base, odp_actions, wc, use_masked); \
     \
 
 /* -- Called in lib/odp-util.c -- */
 #define OVS_FLOW_KEY_ATTR_LENS \
-//::  for header_name in ordered_header_instances_regular:
-    [OVS_KEY_ATTR_${header_name.upper()}] = { .len = sizeof(struct ovs_key_${header_name}) }, \
-//::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
-    [OVS_KEY_ATTR_${field_name.upper()}] = { .len = ATTR_LEN_VARIABLE }, \
-//::    #endfor
-    [OVS_KEY_ATTR_${header_name.upper()}_VALID] = { .len = ATTR_LEN_VARIABLE }, \
+//::  for header_name in ordered_header_instances_non_virtual:
+//::    if header_name == "standard_metadata":
+//::      continue
+//::    #endif
+    [OVS_KEY_ATTR__${header_name.upper()}] = { .len = sizeof(struct ovs_key__${header_name}) }, \
 //::  #endfor
+    [OVS_KEY_ATTR_VALID] = { .len = sizeof(struct ovs_key_valid) }, \
     \
 
 /* -- Called in lib/odp-util.c -- */
 #define OVS_FLOW_KEY_FROM_FLOW \
-//::  for header_name in ordered_header_instances_regular:
-    struct ovs_key_${header_name} *${header_name}; \
-    ${header_name} = nl_msg_put_unspec_uninit(buf, OVS_KEY_ATTR_${header_name.upper()}, sizeof *${header_name}); \
-    get_${header_name}_key(data, ${header_name}); \
+//::  for header_name in ordered_header_instances_non_virtual:
+//::    if header_name == "standard_metadata":
+//::      continue
+//::    #endif
+    struct ovs_key__${header_name} *_${header_name}; \
+    _${header_name} = nl_msg_put_unspec_uninit(buf, OVS_KEY_ATTR__${header_name.upper()}, sizeof *_${header_name}); \
+    get__${header_name}_key(data, _${header_name}); \
     \
 //::  #endfor
+    struct ovs_key_valid *valid; \
+    valid = nl_msg_put_unspec_uninit(buf, OVS_KEY_ATTR_VALID, sizeof *valid); \
+    get_valid_key(data, valid); \
+    \
 
 /* -- Called in lib/odp-util.c -- */
 #define OVS_FLOW_KEY_TO_FLOW \
-//::  for header_name in ordered_header_instances_regular:
-    if (present_attrs & (UINT64_C(1) << OVS_KEY_ATTR_${header_name.upper()})) { \
-        const struct ovs_key_${header_name} *${header_name}; \
+//::  for header_name in ordered_header_instances_non_virtual:
+//::    if header_name == "standard_metadata":
+//::      continue
+//::    #endif
+    if (present_attrs & (UINT64_C(1) << OVS_KEY_ATTR__${header_name.upper()})) { \
+        const struct ovs_key__${header_name} *_${header_name}; \
         \
-        ${header_name} = nl_attr_get(attrs[OVS_KEY_ATTR_${header_name.upper()}]); \
-        put_${header_name}_key(${header_name}, flow); \
+        _${header_name} = nl_attr_get(attrs[OVS_KEY_ATTR__${header_name.upper()}]); \
+        put__${header_name}_key(_${header_name}, flow); \
         if (is_mask) { \
-            expected_attrs |= UINT64_C(1) << OVS_KEY_ATTR_${header_name.upper()}; \
+            expected_attrs |= UINT64_C(1) << OVS_KEY_ATTR__${header_name.upper()}; \
         } \
     } \
     if (!is_mask) { \
-        expected_attrs |= UINT64_C(1) << OVS_KEY_ATTR_${header_name.upper()}; \
+        expected_attrs |= UINT64_C(1) << OVS_KEY_ATTR__${header_name.upper()}; \
     } \
     \
 //::  #endfor
+    if (present_attrs & (UINT64_C(1) << OVS_KEY_ATTR_VALID)) { \
+        const struct ovs_key_valid *valid; \
+        \
+        valid = nl_attr_get(attrs[OVS_KEY_ATTR_VALID]); \
+        put_valid_key(valid, flow); \
+        if (is_mask) { \
+            expected_attrs |= UINT64_C(1) << OVS_KEY_ATTR_VALID; \
+        } \
+    } \
+    if (!is_mask) { \
+        expected_attrs |= UINT64_C(1) << OVS_KEY_ATTR_VALID; \
+    } \
+    \
 
 #endif	/* OVS_MATCH_ODP_UTIL_H */

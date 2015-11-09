@@ -52,66 +52,92 @@
 #define OVS_ODP_SET_ACTION_FUNCS \
 //::  for header_name in ordered_header_instances_regular:
     static void \
-    odp_set_${header_name}(struct dp_packet *packet, const struct ovs_key_${header_name} *key, \
-            const struct ovs_key_${header_name} *mask) \
+    odp_set__${header_name}(struct dp_packet *packet, const struct ovs_key__${header_name} *key, \
+            const struct ovs_key__${header_name} *mask) \
     { \
-        struct ${header_name}_header *${header_name} = &packet->${header_name}; \
+        struct _${header_name}_header *_${header_name} = &packet->_${header_name}; \
         \
 //::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
 //::      if bit_width == 8:
-        uint8_t ${field_name} = key->${field_name} | (${header_name}->${field_name} & ~mask->${field_name}); \
+        uint8_t ${field_name} = key->${field_name} | (_${header_name}->${field_name} & ~mask->${field_name}); \
 //::      elif bit_width == 16:
-        ovs_be16 ${field_name} = key->${field_name} | (${header_name}->${field_name} & ~mask->${field_name}); \
+        ovs_be16 ${field_name} = key->${field_name} | (_${header_name}->${field_name} & ~mask->${field_name}); \
 //::      elif bit_width == 32:
-        ovs_be32 ${field_name} = key->${field_name} | (${header_name}->${field_name} & ~mask->${field_name}); \
+        ovs_be32 ${field_name} = key->${field_name} | (_${header_name}->${field_name} & ~mask->${field_name}); \
 //::      elif bit_width == 64:
-        ovs_be64 ${field_name} = key->${field_name} | (${header_name}->${field_name} & ~mask->${field_name}); \
+        ovs_be64 ${field_name} = key->${field_name} | (_${header_name}->${field_name} & ~mask->${field_name}); \
 //::      else:
         struct ${field_name}_t ${field_name}; \
-        apply_mask_1((const uint8_t *) &key->${field_name}, (const uint8_t *) &${header_name}->${field_name}, \
+        apply_mask_1((const uint8_t *) &key->${field_name}, (const uint8_t *) &_${header_name}->${field_name}, \
                      (const uint8_t *) &mask->${field_name}, \
                      (uint8_t *) &${field_name}, sizeof(struct ${field_name}_t)); \
 //::      #endif
 //::    #endfor
-//::    # TODO: this masking check is unnecessary.
-        uint8_t ${header_name}_valid = key->${header_name}_valid | (packet->${header_name}_valid & ~mask->${header_name}_valid); \
         \
-        packet_set_${header_name}( \
+        packet_set__${header_name}( \
 //::    for field_name, _ in ordered_header_instances_non_virtual_field__name_width[header_name]:
             ${field_name}, \
 //::    #endfor
-            ${header_name}_valid, \
             packet); \
     } \
     \
 //::  #endfor
+    static void \
+    odp_set_valid(struct dp_packet *packet, const struct ovs_key_valid *key, \
+                   const struct ovs_key_valid *mask) \
+    { \
+//::  for header_name in ordered_header_instances_regular:
+        uint8_t _${header_name}_valid = key->_${header_name}_valid | (packet->_${header_name}_valid & ~mask->_${header_name}_valid); \
+//::  #endfor
+        \
+        packet_set_valid( \
+//::  for header_name in ordered_header_instances_regular:
+            _${header_name}_valid, \
+//::  #endfor
+            packet); \
+    } \
+    \
 
 /* -- Called in lib/odp-execute.c -- */
 #define OVS_ODP_EXECUTE_SET_ACTION_CASES \
 //::  for header_name in ordered_header_instances_regular:
-    case OVS_KEY_ATTR_${header_name.upper()}: \
-        { \
-            const struct ovs_key_${header_name} *${header_name}_key = \
-                  nl_attr_get_unspec(a, sizeof(struct ovs_key_${header_name})); \
-            packet_set_${header_name}( \
+    case OVS_KEY_ATTR__${header_name.upper()}: \
+    { \
+        const struct ovs_key__${header_name} *_${header_name}_key = \
+            nl_attr_get_unspec(a, sizeof(struct ovs_key__${header_name})); \
+        packet_set__${header_name}( \
 //::    for field_name, _ in ordered_header_instances_non_virtual_field__name_width[header_name]:
-                ${header_name}_key->${field_name}, \
+            _${header_name}_key->${field_name}, \
 //::    #endfor
-                ${header_name}_key->${header_name}_valid, \
-                packet); \
-        } \
+            packet); \
         break; \
+    } \
 //::  #endfor
+    case OVS_KEY_ATTR_VALID: \
+    { \
+        const struct ovs_key_valid *valid_key = \
+            nl_attr_get_unspec(a, sizeof(struct ovs_key_valid)); \
+        packet_set_valid( \
+//::  for header_name in ordered_header_instances_regular:
+            valid_key->_${header_name}_valid, \
+//::  #endfor
+            packet); \
+        break; \
+    } \
     \
 
 /* -- Called in lib/odp-execute.c -- */
 #define OVS_ODP_EXECUTE_MASKED_SET_ACTION_CASES \
 //::  for header_name in ordered_header_instances_regular:
-    case OVS_KEY_ATTR_${header_name.upper()}: \
-        odp_set_${header_name}(packet, nl_attr_get(a), \
-                get_mask(a, struct ovs_key_${header_name})); \
+    case OVS_KEY_ATTR__${header_name.upper()}: \
+        odp_set__${header_name}(packet, nl_attr_get(a), \
+                get_mask(a, struct ovs_key__${header_name})); \
         break; \
 //::  #endfor
+    case OVS_KEY_ATTR_VALID: \
+        odp_set_valid(packet, nl_attr_get(a), \
+                       get_mask(a, struct ovs_key_valid)); \
+        break; \
     \
 
 #endif	/* OVS_MATCH_ODP_EXECUTE_H */

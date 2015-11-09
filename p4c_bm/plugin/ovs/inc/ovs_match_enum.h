@@ -79,8 +79,9 @@
 //::      base_oxm_offset += 1
 
 //::    #endfor
+//::  #endfor
 //::
-//::    if header_name in ordered_header_instances_regular:
+//::  for header_name in ordered_header_instances_regular:
     /* "${header_name}_valid".
      *
      * ${header_name}_valid field.
@@ -91,11 +92,10 @@
      * Prerequisites: none.
      * Access: read/write.
      * NXM: none.
-     * OXM: OXM_OF_${(header_name).upper()}_VALID(${base_oxm_offset}) since OF1.5 and v2.3.
+     * OXM: OXM_OF_${header_name.upper()}_VALID(${base_oxm_offset}) since OF1.5 and v2.3.
      */
-    MFF_${(header_name).upper()}_VALID,
+    MFF_${header_name.upper()}_VALID,
 //::      base_oxm_offset += 1
-//::    #endif
 
 //::  #endfor
 

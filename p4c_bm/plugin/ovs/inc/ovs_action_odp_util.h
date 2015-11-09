@@ -59,7 +59,7 @@
 /* -- Called in lib/odp-util.c -- */
 #define OVS_FORMAT_ODP_ACTION_ADD_HEADER_CASES \
 //::  for header_name in ordered_header_instances_regular:
-    case OVS_KEY_ATTR_${header_name.upper()}: \
+    case OVS_KEY_ATTR__${header_name.upper()}: \
         ds_put_cstr(ds, "${header_name}"); \
         break; \
 //::  #endfor
@@ -68,7 +68,7 @@
 /* -- Called in lib/odp-util.c -- */
 #define OVS_FORMAT_ODP_ACTION_REMOVE_HEADER_CASES \
 //::  for header_name in ordered_header_instances_regular:
-    case OVS_KEY_ATTR_${header_name.upper()}: \
+    case OVS_KEY_ATTR__${header_name.upper()}: \
         ds_put_cstr(ds, "${header_name}"); \
         break; \
 //::  #endfor
@@ -78,11 +78,11 @@
 #define OVS_FORMAT_ODP_ACTION_CALC_FIELDS_CASES \
 //::  for header_name in ordered_header_instances_regular:
 //::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
-    case OVS_KEY_ATTR_${field_name.upper()}: \
-        ds_put_cstr(ds, "${field_name}"); \
-        break; \
+//    case OVS_KEY_ATTR_${field_name.upper()}: \
+//        ds_put_cstr(ds, "${field_name}"); \
+//        break; \
 //::    #endfor
 //::  #endfor
-    \
+//    \
 
 #endif	/* OVS_ACTION_ODP_UTIL_H */

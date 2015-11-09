@@ -58,33 +58,35 @@
 //::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
 //::      if bit_width == 8:
     nxm_put_8m(b, MFF_${field_name.upper()}, oxm, \
-               flow->${header_name}.hdr.${field_name}, \
-               match->wc.masks.${header_name}.hdr.${field_name}); \
+               flow->_${header_name}.hdr.${field_name}, \
+               match->wc.masks._${header_name}.hdr.${field_name}); \
 //::      elif bit_width == 16:
     nxm_put_16m(b, MFF_${field_name.upper()}, oxm, \
-                flow->${header_name}.hdr.${field_name}, \
-                match->wc.masks.${header_name}.hdr.${field_name}); \
+                flow->_${header_name}.hdr.${field_name}, \
+                match->wc.masks._${header_name}.hdr.${field_name}); \
 //::      elif bit_width == 32:
     nxm_put_32m(b, MFF_${field_name.upper()}, oxm, \
-                flow->${header_name}.hdr.${field_name}, \
-                match->wc.masks.${header_name}.hdr.${field_name}); \
+                flow->_${header_name}.hdr.${field_name}, \
+                match->wc.masks._${header_name}.hdr.${field_name}); \
 //::      elif bit_width == 64:
     nxm_put_64m(b, MFF_${field_name.upper()}, oxm, \
-                flow->${header_name}.hdr.${field_name}, \
-                match->wc.masks.${header_name}.hdr.${field_name}); \
+                flow->_${header_name}.hdr.${field_name}, \
+                match->wc.masks._${header_name}.hdr.${field_name}); \
 //::      else:
     nxm_put(b, MFF_${field_name.upper()}, oxm, \
-            &flow->${header_name}.hdr.${field_name}, \
-            &match->wc.masks.${header_name}.hdr.${field_name}, \
-            sizeof flow->${header_name}.hdr.${field_name}); \
+            &flow->_${header_name}.hdr.${field_name}, \
+            &match->wc.masks._${header_name}.hdr.${field_name}, \
+            sizeof flow->_${header_name}.hdr.${field_name}); \
 //::      #endif
 //::    #endfor
-//::    if header_name in ordered_header_instances_regular:
-    nxm_put_8m(b, MFF_${header_name.upper()}_VALID, oxm, \
-               flow->${header_name}.${header_name}_valid, \
-               match->wc.masks.${header_name}.${header_name}_valid); \
-//::    #endif
     \
 //::  #endfor
+//::
+//::  for header_name in ordered_header_instances_regular:
+    nxm_put_8m(b, MFF_${header_name.upper()}_VALID, oxm, \
+               flow->valid.hdr._${header_name}_valid, \
+               match->wc.masks.valid.hdr._${header_name}_valid); \
+//::  #endfor
+    \
 
 #endif	/* OVS_MATCH_NX_MATCH_H */
