@@ -60,11 +60,11 @@
 #define OVS_FORMAT_ODP_ACTION_CALC_FIELDS_CASES \
 //::  for header_name in ordered_header_instances_regular:
 //::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
-//    case OVS_KEY_ATTR_${field_name.upper()}: \
-//        ds_put_cstr(ds, "${field_name}"); \
-//        break; \
+    case OVS_CALC_FIELD_ATTR_${field_name.upper()}: \
+        ds_put_cstr(ds, "${field_name}"); \
+        break; \
 //::    #endfor
 //::  #endfor
-//    \
+    \
 
 #endif	/* OVS_ACTION_ODP_UTIL_H */

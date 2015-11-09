@@ -22,12 +22,47 @@
 #ifndef OVS_ACTION_OPENVSWITCH_H
 #define	OVS_ACTION_OPENVSWITCH_H 1
 
+//::  import math
+//::
+//::  ordered_field_instances_non_virtual__name_width = []
+//::  ordered_header_instances_non_virtual_field__name_width = {}
+//::  for header_name in ordered_header_instances_non_virtual:
+//::    ordered_header_instances_non_virtual_field__name_width[header_name] = []
+//::    proc_fields = []
+//::    for field_name in header_info[header_name]["fields"]:
+//::      if OVS_PARSER_IMP == 0:
+//::        bit_width = field_info[field_name]["bit_width"]
+//::        bit_width = int(math.ceil(bit_width/8.0)*8)
+//::      elif OVS_PARSER_IMP == 1:
+//::        bit_width = aligned_field_info[field_name]["bit_width"]
+//::        field_name = aligned_field_info[field_name]["name"]
+//::        if field_name in proc_fields:
+//::          continue
+//::        #endif
+//::        proc_fields += [field_name]
+//::      else:
+//::        assert(False)
+//::      #endif
+//::      ordered_field_instances_non_virtual__name_width += [(field_name, bit_width)]
+//::      ordered_header_instances_non_virtual_field__name_width[header_name] += [(field_name, bit_width)]
+//::    #endfor
+//::  #endfor
+//::
 /* -- Called in datapath/linux/compat/include/linux/openvswitch.h -- */
 #define OVS_ACTION_ATTRS \
     \
 
 /* -- Called in datapath/linux/compat/include/linux/openvswitch.h -- */
 #define OVS_ACTION_STRUCTS \
+    \
+
+/* -- Called in datapath/linux/compat/include/linux/openvswitch.h -- */
+#define OVS_CALC_FIELD_ATTRS \
+//::  for header_name in ordered_header_instances_regular:
+//::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
+    OVS_CALC_FIELD_ATTR_${field_name.upper()}, \
+//::    #endfor
+//::  #endfor
     \
 
 #endif	/* OVS_ACTION_OPENVSWITCH_H */

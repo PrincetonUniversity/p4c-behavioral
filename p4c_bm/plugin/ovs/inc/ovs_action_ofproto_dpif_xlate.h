@@ -65,6 +65,17 @@
     \
 
 /* -- Called in ofproto/ofproto-dpif-xlate.c -- */
+#define OVS_COMPOSE_CALC_FIELDS_CASES \
+//::  for header_name in ordered_header_instances_regular:
+//::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
+    case MFF_${field_name.upper()}: \
+        nl_msg_put_flag(ctx->odp_actions, OVS_CALC_FIELD_ATTR_${field_name.upper()}); \
+        break; \
+//::    #endfor
+//::  #endfor
+    \
+
+/* -- Called in ofproto/ofproto-dpif-xlate.c -- */
 #define OVS_COMPOSE_ADD_TO_FIELD_CASES \
 //::  for header_name in ordered_header_instances_regular:
 //::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
@@ -101,17 +112,6 @@
 //::      else:
 //::        pass  # TODO: handle this case (i.e., for arbitrary byte sizes).
 //::      #endif
-//        break; \
-//::    #endfor
-//::  #endfor
-//    \
-
-/* -- Called in ofproto/ofproto-dpif-xlate.c -- */
-#define OVS_COMPOSE_CALC_FIELDS_CASES \
-//::  for header_name in ordered_header_instances_regular:
-//::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
-//    case MFF_${field_name.upper()}: \
-//        nl_msg_put_flag(ctx->odp_actions, OVS_KEY_ATTR_${field_name.upper()}); \
 //        break; \
 //::    #endfor
 //::  #endfor
