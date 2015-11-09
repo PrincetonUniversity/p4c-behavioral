@@ -65,32 +65,6 @@
     \
 
 /* -- Called in ofproto/ofproto-dpif-xlate.c -- */
-#define OVS_COMPOSE_ADD_HEADER_CHECKS \
-//::  for header_name in ordered_header_instances_regular:
-    if (!memcmp("${header_name}", add_header->name, add_header->n_bytes)) { \
-        size_t offset = nl_msg_start_nested(ctx->odp_actions, \
-                                            OVS_ACTION_ATTR_ADD_HEADER); \
-        nl_msg_put_flag(ctx->odp_actions, OVS_KEY_ATTR__${header_name.upper()}); \
-        nl_msg_end_nested(ctx->odp_actions, offset); \
-        return; \
-    } \
-    \
-//::  #endfor
-
-/* -- Called in ofproto/ofproto-dpif-xlate.c -- */
-#define OVS_COMPOSE_REMOVE_HEADER_CHECKS \
-//::  for header_name in ordered_header_instances_regular:
-    if (!memcmp("${header_name}", remove_header->name, remove_header->n_bytes)) { \
-        size_t offset = nl_msg_start_nested(ctx->odp_actions, \
-                                            OVS_ACTION_ATTR_REMOVE_HEADER); \
-        nl_msg_put_flag(ctx->odp_actions, OVS_KEY_ATTR__${header_name.upper()}); \
-        nl_msg_end_nested(ctx->odp_actions, offset); \
-        return; \
-    } \
-    \
-//::  #endfor
-
-/* -- Called in ofproto/ofproto-dpif-xlate.c -- */
 #define OVS_COMPOSE_ADD_TO_FIELD_CASES \
 //::  for header_name in ordered_header_instances_regular:
 //::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:

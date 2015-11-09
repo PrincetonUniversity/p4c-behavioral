@@ -58,4 +58,24 @@
 #define OVS_OUTPUTS_TO_PORT_CASES \
     \
 
+/* -- Called in lib/ofp-actions.c -- */
+#define OVS_ENCODE_ADD_HEADER_CHECKS \
+//::  for header_name in ordered_header_instances_regular:
+    if (!memcmp("${header_name}", ah->name, ah->n_bytes)) { \
+        ofpact_put_set_field(out, ofp_version, MFF_${header_name.upper()}_VALID, 1); \
+        return; \
+    } \
+    \
+//::  #endfor
+
+/* -- Called in lib/ofp-actions.c -- */
+#define OVS_ENCODE_REMOVE_HEADER_CHECKS \
+//::  for header_name in ordered_header_instances_regular:
+    if (!memcmp("${header_name}", rh->name, rh->n_bytes)) { \
+        ofpact_put_set_field(out, ofp_version, MFF_${header_name.upper()}_VALID, 0); \
+        return; \
+    } \
+    \
+//::  #endfor
+
 #endif	/* OVS_ACTION_OFP_ACTIONS_H */

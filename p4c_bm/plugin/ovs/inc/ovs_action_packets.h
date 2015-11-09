@@ -31,25 +31,6 @@
     \
 
 /* -- Called in lib/packets.c -- */
-#define OVS_ADD_HEADER_CASES \
-//::  for header_name in ordered_header_instances_regular:
-    case OVS_KEY_ATTR__${header_name.upper()}: \
-        packet->_${header_name}_valid = true; \
-        break; \
-    \
-//::  #endfor
-
-/* -- Called in lib/packets.c -- */
-#define OVS_REMOVE_HEADER_CASES \
-//::  for header_name in ordered_header_instances_regular:
-    case OVS_KEY_ATTR__${header_name.upper()}: \
-        packet->_${header_name}_valid = false; \
-        packet->_${header_name}_ofs = UINT16_MAX; \
-        break; \
-    \
-//::  #endfor
-
-/* -- Called in lib/packets.c -- */
 #define OVS_DEPARSE_NEW_PAYLOAD_OFS \
 //::  for header_name in ordered_header_instances_regular:
     if (packet->_${header_name}_valid) { \
