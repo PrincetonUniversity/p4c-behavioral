@@ -156,7 +156,7 @@
     \
 
 /* -- Called in lib/meta-flow.c -- */
-#define OVS_SET_VLAUE_CASES \
+#define OVS_SET_VALUE_CASES \
 //::  for header_name in ordered_header_instances_non_virtual:
 //::    if header_name == "standard_metadata":
 //::      continue

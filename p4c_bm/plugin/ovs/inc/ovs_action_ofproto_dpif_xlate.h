@@ -81,13 +81,40 @@
 //::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
 //    case MFF_${field_name.upper()}: \
 //::      if bit_width == 8:
-//        compose_add_to_field_(ctx, OVS_KEY_ATTR_${field_name.upper()}, &value->u8, sizeof value->u8); \
+//			memset(&wc->masks.${header_name}.hdr.${field_name}, 0xff, sizeof value->u8); \
+//			union mf_value tmp; \
+//			apply_mask((const uint8_t *) value, (const uint8_t *) mask, \
+//				(uint8_t *) &tmp, sizeof value->u8); \
+//			union mf_value added_value = flow->${header_name}.hdr.${field_name} + tmp \;
+//			apply_mask((const uint8_t *) added_value, (const uint8_t *) mask, \
+//			(uint8_t *) &flow->${header_name}.hdr.${field_name}, sizeof value->u8); \
 //::      elif bit_width == 16:
-//        compose_add_to_field_(ctx, OVS_KEY_ATTR_${field_name.upper()}, &value->be16, sizeof value->be16); \
+//			memset(&wc->masks.${header_name}.hdr.${field_name}, 0xff, sizeof value->be16); \
+//			union mf_value tmp; \
+//			apply_mask((const uint8_t *) value, (const uint8_t *) mask, \
+//				(uint8_t *) &tmp, sizeof value->be16); \
+//			union mf_value added_value = htons(
+//				ntohs(flow->${header_name}.hdr.${field_name}) + ntohs(tmp)) \;
+//			apply_mask((const uint8_t *) added_value, (const uint8_t *) mask, \
+//              (uint8_t *) &flow->${header_name}.hdr.${field_name}, sizeof value->be16); \
+//			break;
 //::      elif bit_width == 32:
-//        compose_add_to_field_(ctx, OVS_KEY_ATTR_${field_name.upper()}, &value->be32, sizeof value->be32); \
+//          union mf_value tmp; \
+//			apply_mask((const uint8_t *) value, (const uint8_t *) mask, \
+//              (uint8_t *) &tmp, sizeof value->be32); \
+//			union mf_value added_value = htonl(
+//				ntohl(flow->${header_name}.hdr.${field_name}) + ntohl(tmp)) \;
+//			apply_mask((const uint8_t *) added_value, (const uint8_t *) mask, \
+//              (uint8_t *) &flow->${header_name}.hdr.${field_name}, sizeof value->be32); \
+//			break;
 //::      elif bit_width == 64:
-//        compose_add_to_field_(ctx, OVS_KEY_ATTR_${field_name.upper()}, &value->be64, sizeof value->be64); \
+//          union mf_value tmp; \
+//			apply_mask((const uint8_t *) value, (const uint8_t *) mask, \
+//              (uint8_t *) &tmp, sizeof value->be64); \
+//			union mf_value added_value = htonll(
+//				ntohll(flow->${header_name}.hdr.${field_name}) + ntohll(tmp)) \;
+//			apply_mask((const uint8_t *) added_value, (const uint8_t *) mask, \
+//              (uint8_t *) &flow->${header_name}.hdr.${field_name}, sizeof value->be64); \
 //::      else:
 //::        pass  # TODO: handle this case (i.e., for arbitrary byte sizes).
 //::      #endif
@@ -98,23 +125,51 @@
 
 /* -- Called in ofproto/ofproto-dpif-xlate.c -- */
 #define OVS_COMPOSE_SUB_FROM_FIELD_CASES \
-//::  for header_name in ordered_header_instances_regular:
-//::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
-//    case MFF_${field_name.upper()}: \
-//::      if bit_width == 8:
-//        compose_sub_from_field_(ctx, OVS_KEY_ATTR_${field_name.upper()}, &value->u8, sizeof value->u8); \
-//::      elif bit_width == 16:
-//        compose_sub_from_field_(ctx, OVS_KEY_ATTR_${field_name.upper()}, &value->be16, sizeof value->be16); \
-//::      elif bit_width == 32:
-//        compose_sub_from_field_(ctx, OVS_KEY_ATTR_${field_name.upper()}, &value->be32, sizeof value->be32); \
-//::      elif bit_width == 64:
-//        compose_sub_from_field_(ctx, OVS_KEY_ATTR_${field_name.upper()}, &value->be64, sizeof value->be64); \
-//::      else:
-//::        pass  # TODO: handle this case (i.e., for arbitrary byte sizes).
-//::      #endif
-//        break; \
-//::    #endfor
-//::  #endfor
-//    \
+	//::  for header_name in ordered_header_instances_regular:
+	//::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
+	//    case MFF_${field_name.upper()}: \
+	//::      if bit_width == 8:
+	//			memset(&wc->masks.${header_name}.hdr.${field_name}, 0xff, sizeof value->u8); \
+	//          union mf_value tmp; \
+	//			apply_mask((const uint8_t *) value, (const uint8_t *) mask, \
+	//              (uint8_t *) &tmp, sizeof value->u8); \
+	//			union mf_value added_value = flow->${header_name}.hdr.${field_name} - tmp \;
+	//			apply_mask((const uint8_t *) added_value, (const uint8_t *) mask, \
+	//              (uint8_t *) &flow->${header_name}.hdr.${field_name}, sizeof value->u8); \
+	//			break;
+	//::      elif bit_width == 16:
+	//			memset(&wc->masks.${header_name}.hdr.${field_name}, 0xff, sizeof value->be16); \
+	//          union mf_value tmp; \
+	//			apply_mask((const uint8_t *) value, (const uint8_t *) mask, \
+	//              (uint8_t *) &tmp, sizeof value->be16); \
+	//			union mf_value added_value = htons(
+	//				ntohs(flow->${header_name}.hdr.${field_name}) - ntohs(tmp)) \;
+	//			apply_mask((const uint8_t *) added_value, (const uint8_t *) mask, \
+	//              (uint8_t *) &flow->${header_name}.hdr.${field_name}, sizeof value->be16); \
+	//			break;
+	//::      elif bit_width == 32:
+	//          union mf_value tmp; \
+	//			apply_mask((const uint8_t *) value, (const uint8_t *) mask, \
+	//              (uint8_t *) &tmp, sizeof value->be32); \
+	//			union mf_value added_value = htonl(
+	//				ntohl(flow->${header_name}.hdr.${field_name}) - ntohl(tmp)) \;
+	//			apply_mask((const uint8_t *) added_value, (const uint8_t *) mask, \
+	//              (uint8_t *) &flow->${header_name}.hdr.${field_name}, sizeof value->be32); \
+	//			break;
+	//::      elif bit_width == 64:
+	//          union mf_value tmp; \
+	//			apply_mask((const uint8_t *) value, (const uint8_t *) mask, \
+	//              (uint8_t *) &tmp, sizeof value->be64); \
+	//			union mf_value added_value = htonll(
+	//				ntohll(flow->${header_name}.hdr.${field_name}) - ntohll(tmp)) \;
+	//			apply_mask((const uint8_t *) added_value, (const uint8_t *) mask, \
+	//              (uint8_t *) &flow->${header_name}.hdr.${field_name}, sizeof value->be64); \
+	//::      else:
+	//::        pass  # TODO: handle this case (i.e., for arbitrary byte sizes).
+	//::      #endif
+	//        break; \
+	//::    #endfor
+	//::  #endfor
+	//    \
 
 #endif	/* OVS_ACTION_OFPROTO_DPIF_XLATE_H */

@@ -71,3 +71,6 @@ build/*
 *.cache
 .idea/
 tests/output
+
+.ptp-sync-folder
+.ptp-sync
