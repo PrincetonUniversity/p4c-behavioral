@@ -85,7 +85,7 @@
 								union mf_value tmp; \
 								apply_mask((const uint8_t *) value, (const uint8_t *) mask, \
 									(uint8_t *) &tmp, sizeof value->u8); \
-								union mf_value added_value = flow->${header_name}.hdr.${field_name} + tmp \;
+								union mf_value added_value = flow->${header_name}.hdr.${field_name} + tmp; \
 								apply_mask((const uint8_t *) added_value, (const uint8_t *) mask, \
 									(uint8_t *) &flow->${header_name}.hdr.${field_name}, sizeof value->u8); \
 //::      		elif bit_width == 16:
@@ -94,7 +94,7 @@
 								apply_mask((const uint8_t *) value, (const uint8_t *) mask, \
 									(uint8_t *) &tmp, sizeof value->be16); \
 								union mf_value added_value = htons(
-									ntohs(flow->${header_name}.hdr.${field_name}) + ntohs(tmp)) \;
+									ntohs(flow->${header_name}.hdr.${field_name}) + ntohs(tmp)); \
 								apply_mask((const uint8_t *) added_value, (const uint8_t *) mask, \
 									(uint8_t *) &flow->${header_name}.hdr.${field_name}, sizeof value->be16); \
 //::      		elif bit_width == 32:
@@ -103,7 +103,7 @@
 								apply_mask((const uint8_t *) value, (const uint8_t *) mask, \
               		(uint8_t *) &tmp, sizeof value->be32); \
 								union mf_value added_value = htonl(
-									ntohl(flow->${header_name}.hdr.${field_name}) + ntohl(tmp)) \;
+									ntohl(flow->${header_name}.hdr.${field_name}) + ntohl(tmp)); \
 								apply_mask((const uint8_t *) added_value, (const uint8_t *) mask, \
               		(uint8_t *) &flow->${header_name}.hdr.${field_name}, sizeof value->be32); \
 //::      		elif bit_width == 64:
@@ -112,7 +112,7 @@
 								apply_mask((const uint8_t *) value, (const uint8_t *) mask, \
               		(uint8_t *) &tmp, sizeof value->be64); \
 								union mf_value added_value = htonll(
-									ntohll(flow->${header_name}.hdr.${field_name}) + ntohll(tmp)) \;
+									ntohll(flow->${header_name}.hdr.${field_name}) + ntohll(tmp)); \
 								apply_mask((const uint8_t *) added_value, (const uint8_t *) mask, \
               		(uint8_t *) &flow->${header_name}.hdr.${field_name}, sizeof value->be64); \
 //::      else:
@@ -133,7 +133,7 @@
 							union mf_value tmp; \
 							apply_mask((const uint8_t *) value, (const uint8_t *) mask, \
 								(uint8_t *) &tmp, sizeof value->u8); \
-							union mf_value added_value = flow->${header_name}.hdr.${field_name} - tmp \;
+							union mf_value added_value = flow->${header_name}.hdr.${field_name} - tmp; \
 							apply_mask((const uint8_t *) added_value, (const uint8_t *) mask, \
 								(uint8_t *) &flow->${header_name}.hdr.${field_name}, sizeof value->u8); \
 //::      	elif bit_width == 16:
@@ -142,7 +142,7 @@
 							apply_mask((const uint8_t *) value, (const uint8_t *) mask, \
 								(uint8_t *) &tmp, sizeof value->be16); \
 							union mf_value added_value = htons(
-								ntohs(flow->${header_name}.hdr.${field_name}) - ntohs(tmp)) \;
+								ntohs(flow->${header_name}.hdr.${field_name}) - ntohs(tmp)); \
 							apply_mask((const uint8_t *) added_value, (const uint8_t *) mask, \
 								(uint8_t *) &flow->${header_name}.hdr.${field_name}, sizeof value->be16); \
 //::      elif bit_width == 32:
@@ -151,7 +151,7 @@
 							apply_mask((const uint8_t *) value, (const uint8_t *) mask, \
               	(uint8_t *) &tmp, sizeof value->be32); \
 							union mf_value added_value = htonl(
-								ntohl(flow->${header_name}.hdr.${field_name}) - ntohl(tmp)) \;
+								ntohl(flow->${header_name}.hdr.${field_name}) - ntohl(tmp)); \
 							apply_mask((const uint8_t *) added_value, (const uint8_t *) mask, \
               	(uint8_t *) &flow->${header_name}.hdr.${field_name}, sizeof value->be32); \
 //::      elif bit_width == 64:
@@ -160,7 +160,7 @@
 					apply_mask((const uint8_t *) value, (const uint8_t *) mask, \
           	(uint8_t *) &tmp, sizeof value->be64); \
 					union mf_value added_value = htonll(
-						ntohll(flow->${header_name}.hdr.${field_name}) - ntohll(tmp)) \;
+						ntohll(flow->${header_name}.hdr.${field_name}) - ntohll(tmp)); \
 					apply_mask((const uint8_t *) added_value, (const uint8_t *) mask, \
           	(uint8_t *) &flow->${header_name}.hdr.${field_name}, sizeof value->be64); \
 //::      else:
