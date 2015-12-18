@@ -138,7 +138,7 @@ union mf_value tmp; \
               apply_mask((const uint8_t *) value, (const uint8_t *) mask, \
                 (uint8_t *) &tmp, sizeof value->be16); \
               tmp.be16 = htons( \
-                ntohs(flow->_${header_name}.hdr.${field_name}) - ntohs(tmp.be16)) \
+                ntohs(flow->_${header_name}.hdr.${field_name}) - ntohs(tmp.be16)); \
               apply_mask((const uint8_t *) &tmp, (const uint8_t *) mask, \
                 (uint8_t *) &flow->_${header_name}.hdr.${field_name}, sizeof value->be16); \
 //::      elif bit_width == 32:
