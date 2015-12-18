@@ -87,7 +87,7 @@ union mf_value tmp; \
                   (uint8_t *) &tmp, sizeof value->u8); \ 
                 tmp.u8 = flow->_${header_name}.hdr.${field_name} + tmp.u8; \
                 apply_mask((const uint8_t *) &tmp, (const uint8_t *) mask, \
-                  (uint8_t *) &flow->${header_name}.hdr.${field_name}, sizeof value->u8); \
+                  (uint8_t *) &flow->_${header_name}.hdr.${field_name}, sizeof value->u8); \
 //::          elif bit_width == 16:
                 memset(&wc->masks._${header_name}.hdr.${field_name}, 0xff, sizeof value->be16); \
                 apply_mask((const uint8_t *) value, (const uint8_t *) mask, \
