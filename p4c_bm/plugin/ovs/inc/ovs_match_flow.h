@@ -89,8 +89,9 @@
 //::          # TODO: offset increase should be based on header length expression, need to implement this.
     miniflow_push_words(mf, _${header_name}, _${header_name}_${call_id}, \
         sizeof(struct _${header_name}_padded_header) / sizeof(uint64_t)); \
-    packet->_${header_name} = *(struct _${header_name}_header *) _${header_name}_${call_id}; \
-    packet->_${header_name}_valid = valid.hdr._${header_name}_valid = 1; \
+    valid.hdr._${header_name}_valid = 1; \
+//::  #   packet->_${header_name} = *(struct _${header_name}_header *) _${header_name}_${call_id}; \
+//::  #   packet->_${header_name}_valid = valid.hdr._${header_name}_valid = 1; \
     \
 //::        elif type == "set":
 //::          destination = call[1]
@@ -557,7 +558,7 @@
 
 //::  #endfor
 #define OVS_MINIFLOW_OUT \
-    packet->payload_ofs = (char *)data - l2; \
+//:: #    packet->payload_ofs = (char *)data - l2; \
     \
 //:: for header_name in ordered_header_instances_metadata:
 //::   if header_name == "standard_metadata":
