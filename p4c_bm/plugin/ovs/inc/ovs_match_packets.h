@@ -184,6 +184,7 @@
     { \
 //::  for header_name in ordered_header_instances_regular:
 //::  #        packet->_${header_name}_valid = _${header_name}_valid; \
+        \
 //::  #endfor
     } \
     \
