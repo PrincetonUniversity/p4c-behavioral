@@ -64,10 +64,10 @@
 #define OVS_ODP_EXECUTE_CALC_FIELDS_SRCS_CASES \
 //::  for header_name in ordered_header_instances_regular:
 //::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
-    case OVS_CALC_FIELD_ATTR_${field_name.upper()}: \
-        memcpy(buf, &packet->_${header_name}.${field_name}, sizeof packet->_${header_name}.${field_name}); \
-        buf += sizeof packet->_${header_name}.${field_name}; \
-        break; \
+//    case OVS_CALC_FIELD_ATTR_${field_name.upper()}: \
+//        memcpy(buf, &packet->_${header_name}.${field_name}, sizeof packet->_${header_name}.${field_name}); \
+//        buf += sizeof packet->_${header_name}.${field_name}; \
+//        break; \
 //::    #endfor
 //::  #endfor
     \
@@ -77,8 +77,9 @@
 //::  for header_name in ordered_header_instances_regular:
 //::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
 //::      if bit_width == 16:
-    case OVS_CALC_FIELD_ATTR_${field_name.upper()}: \
-        return (packet->_${header_name}.${field_name} == res16); \
+//    case OVS_CALC_FIELD_ATTR_${field_name.upper()}: \
+//        return (packet->_${header_name}.${field_name} == res16); \
+	\
 //::      else:
 //::        pass  # TODO: handle other cases (for different bit sizes).
 //::      #endif
@@ -91,9 +92,10 @@
 //::  for header_name in ordered_header_instances_regular:
 //::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
 //::      if bit_width == 16:
-    case OVS_CALC_FIELD_ATTR_${field_name.upper()}: \
-        packet->_${header_name}.${field_name} = res16; \
-        break; \
+//    case OVS_CALC_FIELD_ATTR_${field_name.upper()}: \
+//        packet->_${header_name}.${field_name} = res16; \
+//        break; \
+	\
 //::      else:
 //::        pass  # TODO: handle other cases (for different bit sizes).
 //::      #endif
