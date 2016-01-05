@@ -55,7 +55,7 @@
     odp_set__${header_name}(struct dp_packet *packet, const struct ovs_key__${header_name} *key, \
             const struct ovs_key__${header_name} *mask) \
     { \
-        struct _${header_name}_header *_${header_name} = &packet->_${header_name}; \
+        struct _${header_name}_header *_${header_name} = dp_packet_${header_name}(packet); \ // &packet->_${header_name}; \
         \
 //::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
 //::      if bit_width == 8:
@@ -87,7 +87,8 @@
                    const struct ovs_key_valid *mask) \
     { \
 //::  for header_name in ordered_header_instances_regular:
-        uint8_t _${header_name}_valid = key->_${header_name}_valid | (packet->_${header_name}_valid & ~mask->_${header_name}_valid); \
+//::  #        uint8_t _${header_name}_valid = key->_${header_name}_valid | (packet->_${header_name}_valid & ~mask->_${header_name}_valid); \
+    	uint8_t _${header_name}_valid; \
 //::  #endfor
         \
         packet_set_valid( \

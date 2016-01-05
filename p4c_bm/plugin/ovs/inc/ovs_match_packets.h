@@ -167,7 +167,7 @@
 //::    #endfor
         struct dp_packet *packet) \
     { \
-        struct _${header_name}_header *_${header_name} = &packet->_${header_name}; \
+        struct _${header_name}_header *_${header_name} = dp_packet_${header_name}(packet); \ // &packet->_${header_name}; \
         \
 //::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
         _${header_name}->${field_name} = ${field_name}; \

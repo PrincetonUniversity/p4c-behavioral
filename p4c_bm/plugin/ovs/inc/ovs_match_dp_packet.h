@@ -44,4 +44,15 @@
 //::  #    b->payload_ofs = UINT16_MAX; \
     \
 
+/* -- Called in lib/dp-packet.h -- */
+#define OVS_HDR_GET_DP_PACKET_OFS \
+//::  for header_name in ordered_header_instances_regular:
+	static inline void * dp_packet_${header_name}(const struct dp_packet *b) { \
+    	return b->_${header_name}_ofs != UINT16_MAX \
+    			? (char *) dp_packet_data(b) + b->_${header_name}_ofs \
+    			: NULL; \
+    } \
+//::  #endfor
+	\
+
 #endif	/* OVS_MATCH_DP_PACKET_H */
