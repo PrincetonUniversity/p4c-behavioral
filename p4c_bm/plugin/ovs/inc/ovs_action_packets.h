@@ -33,21 +33,23 @@
 /* -- Called in lib/packets.c -- */
 #define OVS_DEPARSE_NEW_PAYLOAD_OFS \
 //::  for header_name in ordered_header_instances_regular:
-//::  #    if (packet->_${header_name}_valid) { \
-//::  #        new_payload_ofs += sizeof(struct _${header_name}_header); \
-//::  #    } \
+    if (packet->_${header_name}_valid) { \
+        new_payload_ofs += sizeof(struct _${header_name}_header); \
+    } \
+	\
 //::  #endfor
     \
 
 /* -- Called in lib/packets.c -- */
 #define OVS_DEPARSE_WRITE_HEADERS \
 //::  for header_name in ordered_header_instances_regular:
-//::  #    if (packet->_${header_name}_valid) { \
-//::  #        memcpy(data + run_ofs, &packet->_${header_name}, sizeof(struct _${header_name}_header)); \
-//::  #        packet->_${header_name}_ofs = run_ofs; \
-//::  #        \
-//::  #        run_ofs += sizeof(struct _${header_name}_header); \
-//::  #    } \
+    if (packet->_${header_name}_valid) { \
+        memcpy(data + run_ofs, &packet->_${header_name}, sizeof(struct _${header_name}_header)); \
+        packet->_${header_name}_ofs = run_ofs; \
+        \
+        run_ofs += sizeof(struct _${header_name}_header); \
+    } \
+	\
 //::  #endfor
     \
 

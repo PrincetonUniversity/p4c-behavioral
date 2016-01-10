@@ -87,8 +87,7 @@
                    const struct ovs_key_valid *mask) \
     { \
 //::  for header_name in ordered_header_instances_regular:
-//::  #        uint8_t _${header_name}_valid = key->_${header_name}_valid | (packet->_${header_name}_valid & ~mask->_${header_name}_valid); \
-    	uint8_t _${header_name}_valid; \
+        uint8_t _${header_name}_valid = key->_${header_name}_valid | (packet->_${header_name}_valid & ~mask->_${header_name}_valid); \
 //::  #endfor
         \
         packet_set_valid( \
