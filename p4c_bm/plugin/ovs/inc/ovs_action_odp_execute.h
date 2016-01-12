@@ -175,4 +175,46 @@
 //::  #endfor
 //    \
 
+/* -- Called in lib/odp-execute.c -- */
+#define OVS_ODP_EXECUTE_ADD_HEADER_GET_OFS \
+//::  for header_name in ordered_header_instances_regular:
+	if (OVS_KEY_ATTR__${header_name.upper()} == key) { \
+		header_size = sizeof(struct _${header_name}_header); \
+		packet->_${header_name}_valid = 1; \
+		goto push; \
+	} \
+	else if (packet->_${header_name}_valid) { \
+		header_ofs += sizeof(struct _${header_name}_header); \
+	} \
+	\
+//::  #endfor
+	\
+
+/* -- Called in lib/odp-execute.c -- */
+#define OVS_ODP_EXECUTE_REMOVE_HEADER_GET_OFS \
+//::  for header_name in ordered_header_instances_regular:
+	if (OVS_KEY_ATTR__${header_name.upper()} == key) { \
+		header_size = sizeof(struct _${header_name}_header); \
+		packet->_${header_name}_valid = 0; \
+		goto pop; \
+	} \
+	else if (packet->_${header_name}_valid) { \
+		header_ofs += sizeof(struct _${header_name}_header); \
+	} \
+	\
+//::  #endfor
+	\
+
+/* -- Called in lib/odp-execute.c -- */
+#define OVS_ODP_EXECUTE_ADD_REMOVE_HEADER_SET_OFS \
+//::  for header_name in ordered_header_instances_regular:
+	if (packet->_${header_name}_valid) { \
+		packet->_${header_name}_ofs = header_ofs; \
+		header_ofs += sizeof(struct _${header_name}_header); \
+	} \
+	\
+//::  #endfor
+	\
+
+
 #endif	/* OVS_ACTION_ODP_EXECUTE_H */

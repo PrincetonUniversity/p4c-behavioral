@@ -67,4 +67,13 @@
 //::  #endfor
     \
 
+/* -- Called in lib/odp-util.c -- */
+#define OVS_FORMAT_ODP_ACTION_ADD_REMOVE_HEADER_CASES \
+//::  for header_name in ordered_header_instances_regular:
+	case OVS_KEY_ATTR__${header_name.upper()}: \
+		ds_put_cstr(ds, "${header_name}"); \
+		break; \
+//::  #endfor
+	\
+
 #endif	/* OVS_ACTION_ODP_UTIL_H */

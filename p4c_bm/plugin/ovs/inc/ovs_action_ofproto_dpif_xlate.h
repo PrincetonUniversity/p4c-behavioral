@@ -201,5 +201,13 @@
 //::  #endfor
 	  \
 
+/* -- Called in ofproto/ofproto-dpif-xlate.c -- */
+#define OVS_COMPOSE_ADD_REMOVE_HEADER_CASES \
+//::  for header_name in ordered_header_instances_regular:
+    case MFF_${header_name.upper()}_VALID: \
+		nl_msg_put_flag(ctx->odp_actions, OVS_KEY_ATTR__${header_name.upper()}); \
+        break; \
+//::  #endfor
+    \
 
 #endif	/* OVS_ACTION_OFPROTO_DPIF_XLATE_H */

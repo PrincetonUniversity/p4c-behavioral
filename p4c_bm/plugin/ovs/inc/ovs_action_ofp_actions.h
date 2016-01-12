@@ -59,23 +59,41 @@
     \
 
 /* -- Called in lib/ofp-actions.c -- */
-#define OVS_ENCODE_ADD_HEADER_CHECKS \
+#define OVS_PARSE_ADD_HEADER_CHECKS \
 //::  for header_name in ordered_header_instances_regular:
-    if (!memcmp("${header_name}", ah->name, ah->n_bytes)) { \
-        ofpact_put_set_field(out, ofp_version, MFF_${header_name.upper()}_VALID, 1); \
+    if (!memcmp("${header_name}", arg, strlen(arg))) { \
+    	ofpact_put_ADD_HEADER(ofpacts)->header_id = (uint32_t)MFF_${header_name.upper()}_VALID; \
         return; \
     } \
     \
 //::  #endfor
 
 /* -- Called in lib/ofp-actions.c -- */
-#define OVS_ENCODE_REMOVE_HEADER_CHECKS \
+#define OVS_FORMAT_ADD_HEADER_CASES \
 //::  for header_name in ordered_header_instances_regular:
-    if (!memcmp("${header_name}", rh->name, rh->n_bytes)) { \
-        ofpact_put_set_field(out, ofp_version, MFF_${header_name.upper()}_VALID, 0); \
-        return; \
-    } \
-    \
+    case MFF_${header_name.upper()}_VALID: \
+		ds_put_format(s, "add_header:${header_name}"); \
+		break; \
+	\
+//::  #endfor
+
+/* -- Called in lib/ofp-actions.c -- */
+#define OVS_PARSE_REMOVE_HEADER_CHECKS \
+//::  for header_name in ordered_header_instances_regular:
+	if (!memcmp("${header_name}", arg, strlen(arg))) { \
+		ofpact_put_REMOVE_HEADER(ofpacts)->header_id = (uint32_t)MFF_${header_name.upper()}_VALID; \
+		return; \
+	} \
+	\
+//::  #endfor
+
+/* -- Called in lib/ofp-actions.c -- */
+#define OVS_FORMAT_REMOVE_HEADER_CASES \
+//::  for header_name in ordered_header_instances_regular:
+	case MFF_${header_name.upper()}_VALID: \
+		ds_put_format(s, "remove_header:${header_name}"); \
+		break; \
+	\
 //::  #endfor
 
 #endif	/* OVS_ACTION_OFP_ACTIONS_H */
