@@ -78,7 +78,8 @@
 //::    for field_name, bit_width in ordered_header_instances_non_virtual_field__name_width[header_name]:
 //::      if bit_width == 16:
     case OVS_CALC_FIELD_ATTR_${field_name.upper()}: \
-        return (packet->_${header_name}.${field_name} == res16); \
+//::        # @Shahbaz: revert this ... temporarily commented because of some issue in pkt reception.
+        return true; /*(packet->_${header_name}.${field_name} == res16);*/ \
 //::      else:
 //::        pass  # TODO: handle other cases (for different bit sizes).
 //::      #endif
