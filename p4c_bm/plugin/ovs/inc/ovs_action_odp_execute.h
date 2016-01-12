@@ -67,9 +67,11 @@
     case OVS_CALC_FIELD_ATTR_${field_name.upper()}: \
         /*memcpy(buf, &packet->_${header_name}.${field_name}, sizeof packet->_${header_name}.${field_name});*/ \
         /*buf += sizeof packet->_${header_name}.${field_name};*/ \
-		struct _${header_name}_header *_${header_name} = dp_packet_${header_name}(packet); \
-		memcpy(buf, &_${header_name}->${field_name}, sizeof _${header_name}->${field_name}); \
-		buf += sizeof _${header_name}->${field_name}; \
+		{ \
+			struct _${header_name}_header *_${header_name} = dp_packet_${header_name}(packet); \
+			memcpy(buf, &_${header_name}->${field_name}, sizeof _${header_name}->${field_name}); \
+			buf += sizeof _${header_name}->${field_name}; \
+		} \
         break; \
 //::    #endfor
 //::  #endfor
@@ -83,8 +85,10 @@
     case OVS_CALC_FIELD_ATTR_${field_name.upper()}: \
 //::        # @Shahbaz: revert this ... temporarily commented because of some issue in pkt reception.
         /*return true; /*(packet->_${header_name}.${field_name} == res16);*/ \
-		struct _${header_name}_header *_${header_name} = dp_packet_${header_name}(packet); \
-		return true; /*(_${header_name}->${field_name} == res16);*/ \
+		{ \
+			struct _${header_name}_header *_${header_name} = dp_packet_${header_name}(packet); \
+			return true; /*(_${header_name}->${field_name} == res16);*/ \
+		} \
 //::      else:
 //::        pass  # TODO: handle other cases (for different bit sizes).
 //::      #endif
@@ -99,8 +103,10 @@
 //::      if bit_width == 16:
     case OVS_CALC_FIELD_ATTR_${field_name.upper()}: \
         /*packet->_${header_name}.${field_name} = res16;*/ \
-		struct _${header_name}_header *_${header_name} = dp_packet_${header_name}(packet); \
-		_${header_name}->${field_name} = res16; \
+		{ \
+			struct _${header_name}_header *_${header_name} = dp_packet_${header_name}(packet); \
+			_${header_name}->${field_name} = res16; \
+		} \
         break; \
 //::      else:
 //::        pass  # TODO: handle other cases (for different bit sizes).
