@@ -578,6 +578,16 @@
     \
 
 /* -- Called in lib/flow.c -- */
+#define OVS_FLOW_WC_MASK \
+//::  for header_name in ordered_header_instances_regular:
+//::   if header_name == "standard_metadata":
+//::     continue
+//::   #endif
+    WC_MASK_FIELD(wc, _${header_name}); \
+//::  #endfor
+	\
+
+/* -- Called in lib/flow.c -- */
 #define OVS_FLOW_WC_MAP \
 //::  for header_name in ordered_header_instances_regular:
 //::   if header_name == "standard_metadata":
