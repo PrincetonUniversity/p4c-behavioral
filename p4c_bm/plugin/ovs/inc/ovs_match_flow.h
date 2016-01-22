@@ -585,7 +585,7 @@
 //::   #endif
     FLOWMAP_SET(map, _${header_name}); \
 //::  #endfor
-    FLOWMAP_SET(map, valid); \
+    /*FLOWMAP_SET(map, valid);*/ \
     \
 
 #endif	/* OVS_MATCH_FLOW_H */
