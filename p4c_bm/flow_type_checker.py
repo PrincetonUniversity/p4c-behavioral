@@ -11,6 +11,11 @@ ACTION_TYPE = "action"
 PRIORITY_TYPE = "priority" 
 OUTPUT_VAL = "output"
 DEPARSE_VAL = "deparse"
+MATCH_TABLE = "table"
+MATCH_PRIORITY = "priority"
+MATCH_IN_PORT = "in_port"
+MATCH_REG = "reg"
+VALID_MATCH_TAGS = [MATCH_TABLE, MATCH_PRIORITY, MATCH_IN_PORT]
 
 def exit_with_error(error_msg):
   """ Exit with error code after printing the error """
@@ -79,7 +84,15 @@ def check_flow_type(match_vals, action_vals, parser_def_dict):
       match_name, match_val = match_elem.split("=")
     except Exception:
       exit_with_error("Invalid match format.")
-    print match_name, match_val
+    if match_name in VALID_MATCH_TAGS:
+      continue
+    # TODO: Fix the wrong registry value
+    if MATCH_REG in match_name:
+      continue
+    if match_name not in parser_def_dict['field_info']:
+      exit_with_error("Match variable is not part of the spec")
+    #TODO: Check data type for the match variables here
+
 
   # Checking the actions
   action_name, actions = action_vals.split("=")
