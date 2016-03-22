@@ -22,6 +22,7 @@ import smart
 import shutil
 from pkg_resources import resource_string
 import json
+import cPickle as pickle
 
 
 def get_parser():
@@ -133,6 +134,9 @@ def main():
                                            args.meta_config,
                                            args.public_inc_path,
                                            dump_yaml = args.dump_yaml)
+
+    # Dumps the render dict for flow type checker
+    pickle.dump(render_dict, open(gen_dir + "/parse_dict.p","wb"))
 
     # @Shahbaz:
     # TODO: add a command line argument for this option.
